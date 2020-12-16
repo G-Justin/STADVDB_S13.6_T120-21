@@ -15,5 +15,11 @@
   "bugs": {
     "url": "https://github.com/G-Justin/ST-ADVDB-G6/issues"
   },
-  "homepage": "https://github.com/G-Justin/ST-ADVDB-G6#readme"
+  "homepage": "https://github.com/G-Justin/ST-ADVDB-G6#readme",
+  "dependencies": {
+    "express": "^4.17.1",
+    "express-handlebars": "^5.2.0",
+    "hbs": "^4.1.1",
+    "mysql": "^2.18.1"
+  }
 }
