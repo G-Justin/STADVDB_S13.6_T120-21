@@ -30,12 +30,13 @@ if(port == null || port == "") {
     port = 3030;
 }
 
-const dbname = process.argv[2];
-const username = process.argv[3];
-const password = process.argv[4];
+const username = process.argv[2];
+const password = process.argv[3];
 
-database.connectToDatabase(dbname, username, password);
+database.connect(username, password);
 
 app.listen(port, function () {
     console.log('STADVDB listening at port ' + port + '.');
 });
+
+

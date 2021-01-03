@@ -1,20 +1,32 @@
-//TODO: connect to mysql
-const {Sequelize} = require('sequelize');
+const mysql = require('mysql2/promise');
 
-const connectToDatabase = async(dbname, username, password) => {
-    const sequelize = new Sequelize(dbname, username, password, {
-        host: 'localhost',
-        dialect: 'mysql'
-    });
-
+const connect = async(username, password) => {
+    
+    let connection;
     try {
-        await sequelize.authenticate();
-        console.log('Success.');
+        connection = await mysql.createConnection({
+            host: 'localhost',
+            user: username,
+            password: password,
+            database: 'world' //!test
+        });
+        console.log('Successfully connected to database: world');
+        global.connection = connection;
     } catch (error) {
-        console.error('Unable to connect: ' + error);
+        console.error('Database connection error: ' + error);
+    };
+
+
+    //!test
+    /* 
+    try {
+        const [rows, fields] = await connection.execute('SELECT * FROM country');
+        console.log(rows);
+    } catch (error) {
+        console.error(error);
     }
+    */
+    
 }
 
-module.exports = {
-    connectToDatabase
-};
+module.exports = {connect};
