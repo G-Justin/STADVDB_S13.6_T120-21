@@ -1,3 +1,4 @@
+const database  = require('./models/database.js');
 const express 	= require('express');
 const exphbs 	= require('express-handlebars');
 const hbs 		= require('hbs');
@@ -28,6 +29,12 @@ let port = process.env.PORT;
 if(port == null || port == "") {
     port = 3030;
 }
+
+const dbname = process.argv[2];
+const username = process.argv[3];
+const password = process.argv[4];
+
+database.connectToDatabase(dbname, username, password);
 
 app.listen(port, function () {
     console.log('STADVDB listening at port ' + port + '.');
