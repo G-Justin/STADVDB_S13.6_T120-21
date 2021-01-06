@@ -3,9 +3,10 @@ const path = require("path");
 const app = express();
 const db = require("../queries");
 
-app.get("/", (req, res) => {
-  res.render("index", { title: "index" });
-  return;
+app.get('/', (req, res) => {
+    res.render('index', {
+        title: 'index'});
+    return;
 });
 
 app.get("/highestgrossing", db.getHighestGrossing); //ex: /highestgrossing?year=<YEAR>&limit=<NUMBER OF RESULTS>

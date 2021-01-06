@@ -30,7 +30,7 @@ if (port == null || port == "") {
   port = 3030;
 }
 
-// database.connect();
+//database.connect();
 
 app.listen(port, function () {
   console.log("STADVDB listening at port " + port + ".");
