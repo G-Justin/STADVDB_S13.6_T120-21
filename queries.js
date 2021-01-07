@@ -124,10 +124,16 @@ const getTopRatedMovieGenre = (req, res) => {
   const genre = req.query.genre;
   const limit = req.query.limit;
   pool.query(
-    `select id, genres, vote_average, vote_count,
-    ((DENSE_RANK() OVER(ORDER BY vote_count ASC))*vote_average) AS vote_score
-    from metadata 
-    where $1 = ANY(genres)
+    `select 	title, tagline, runtime, release_date, overview, 
+              popularity, vote_average, vote_count, budget, revenue,
+              array(	select json_build_object('name', name, 'job', job) from crew c 
+                where c.movie_id = m.id and (position('Writer' in job) > 0 
+              or position('Director' in job) > 0))
+              AS crew,
+              vote_average, vote_count,
+              ((DENSE_RANK() OVER(ORDER BY vote_count ASC))*vote_average) AS vote_score 
+    from metadata m, genres g 
+    where g.name = $1 AND $$'$$ || CAST(g.id as text) || $$'$$ = ANY(genres)
     order by vote_score DESC 
     Limit $2;
   `,
