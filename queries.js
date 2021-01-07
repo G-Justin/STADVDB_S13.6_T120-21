@@ -1,4 +1,24 @@
-return;
+/**
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * *Refer to /controllers folder => indexcontroller.js
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ */
 const Pool = require("pg").Pool;
 
 const pool = new Pool({

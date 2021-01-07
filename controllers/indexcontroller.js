@@ -8,6 +8,7 @@ const getIndex = async(req, res) => {
     const year = "";
     const limit = req.query.limit;
     
+    //right now for testing purposes, limit and year are placeholders
     let query = (year.trim() === "") ? 
     `
         SELECT title, release_date AS year, revenue-budget AS gross_income
