@@ -4,6 +4,7 @@ const hbs = require("hbs");
 const path = require("path");
 const routes = require("./routes/routes.js");
 const app = express();
+const database = require('./models/database.js');
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static("public"));
@@ -30,7 +31,7 @@ if (port == null || port == "") {
   port = 3030;
 }
 
-//database.connect();
+database.connect();
 
 app.listen(port, function () {
   console.log("STADVDB listening at port " + port + ".");

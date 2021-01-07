@@ -1,3 +1,4 @@
+return;
 const Pool = require("pg").Pool;
 
 const pool = new Pool({
@@ -5,11 +6,12 @@ const pool = new Pool({
   host: "localhost",
   database: "movies",
   password: "password",
-  //   port: 3030,
+  port: 5432,
 });
 
+//?1 table; 2 queries?
 const getHighestGrossing = (req, res) => {
-  const year = req.query.year;
+  const year = "";
   const limit = req.query.limit;
   pool.query(
     `
@@ -26,21 +28,22 @@ const getHighestGrossing = (req, res) => {
         console.log(error);
         throw error;
       }
+      console.log(results.rows)
       res.status(200).json(results.rows);
     }
   );
 };
 
-const getMostProducedGenre = (req, res) => {
+const getTopRatedMovieYear = (req, res) => {
   const year = req.query.year;
   const limit = req.query.limit;
   pool.query(
-    `SELECT g.name, COUNT(g.name) AS "count"
-      FROM metadata m, genres g
-      where $$'$$ || CAST(g.id AS text) || $$'$$ = ANY(m.genres) AND EXTRACT(year from m.release_date) = $1
-      GROUP BY g.name
-      ORDER BY count DESC
-      LIMIT $2;      
+    `SELECT title, vote_average, vote_count, 
+    ((DENSE_RANK() OVER(ORDER BY vote_count ASC))*vote_average) AS vote_score
+    FROM metadata
+    WHERE EXTRACT(year from metadata.release_date) = $1
+    ORDER BY vote_score DESC
+    LIMIT $2
   `,
     [year, limit],
     (error, results) => {
@@ -53,15 +56,19 @@ const getMostProducedGenre = (req, res) => {
   );
 };
 
-const getMoviesFromKeyword = (req, res) => {
-  const keyword = req.query.keyword;
+//?2 tables; 2 queries?
+const getMostProducedGenre = (req, res) => {
+  const year = req.query.year;
+  const limit = req.query.limit;
   pool.query(
-    `select m.id, m.title
-    from metadata m join keywords k
-    on $$'$$ || CAST(k.id AS text) || $$'$$ = ANY(m.keywords)
-    where k.name = $1;
+    `SELECT g.name, COUNT(g.name) AS "count"
+      FROM metadata m, genres g
+      where $$'$$ || CAST(g.id AS text) || $$'$$ = ANY(m.genres) AND EXTRACT(year from m.release_date) = $1
+      GROUP BY g.name
+      ORDER BY count DESC
+      LIMIT $2;      
   `,
-    [keyword],
+    [year, limit],
     (error, results) => {
       if (error) {
         console.log(error);
@@ -98,28 +105,8 @@ const getMovie = (req, res) => {
   );
 };
 
-const getTopRatedMovieYear = (req, res) => {
-  const year = req.query.year;
-  const limit = req.query.limit;
-  pool.query(
-    `SELECT title, vote_average, vote_count, 
-    ((DENSE_RANK() OVER(ORDER BY vote_count ASC))*vote_average) AS vote_score
-    FROM metadata
-    WHERE EXTRACT(year from metadata.release_date) = $1
-    ORDER BY vote_score DESC
-    LIMIT $2
-  `,
-    [year, limit],
-    (error, results) => {
-      if (error) {
-        console.log(error);
-        throw error;
-      }
-      res.status(200).json(results.rows);
-    }
-  );
-};
 
+//?3 tables; 2 queries
 const getTopRatedMovieGenre = (req, res) => {
   const genre = req.query.genre;
   const limit = req.query.limit;
@@ -162,6 +149,27 @@ const getTopDirectorsGenre = (req, res) => {
     LIMIT $2;
   `,
     [genre, limit],
+    (error, results) => {
+      if (error) {
+        console.log(error);
+        throw error;
+      }
+      res.status(200).json(results.rows);
+    }
+  );
+};
+
+
+//?4-6 tables; 1 query
+const getMoviesFromKeyword = (req, res) => {
+  const keyword = req.query.keyword;
+  pool.query(
+    `select m.id, m.title
+    from metadata m join keywords k
+    on $$'$$ || CAST(k.id AS text) || $$'$$ = ANY(m.keywords)
+    where k.name = $1;
+  `,
+    [keyword],
     (error, results) => {
       if (error) {
         console.log(error);

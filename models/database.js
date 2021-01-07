@@ -16,6 +16,22 @@ const connect = async () => {
   } catch (error) {
     console.log(error);
   }
+
+ return;
+  try {
+    let rows = await pgconnection.query(` 
+    SELECT title, revenue-budget AS gross_income
+    FROM metadata
+    WHERE EXTRACT(year from metadata.release_date) = 2005
+    ORDER BY gross_income DESC
+    LIMIT 10 
+  `);
+
+  console.log(rows.rows);
+  } catch (error) {
+    console.log(error);
+  }
+  
 };
 
 module.exports = { connect };
