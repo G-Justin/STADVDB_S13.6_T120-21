@@ -36,7 +36,7 @@ const getHighestGrossing = (req, res) => {
   pool.query(
     `
     EXPLAIN ANALYZE VERBOSE 
-    SELECT title, revenue-budget AS gross_income
+    SELECT title, release_date AS year, revenue-budget AS gross_income
   FROM metadata
   WHERE EXTRACT(year from metadata.release_date) = $1
   ORDER BY gross_income DESC
@@ -58,7 +58,7 @@ const getTopRatedMovieYear = (req, res) => {
   const year = req.query.year;
   const limit = req.query.limit;
   pool.query(
-    `SELECT title, vote_average, vote_count, 
+    `SELECT title, release_date AS year, vote_average, vote_count, 
     ((DENSE_RANK() OVER(ORDER BY vote_count ASC))*vote_average) AS vote_score
     FROM metadata
     WHERE EXTRACT(year from metadata.release_date) = $1
@@ -81,7 +81,7 @@ const getMostProducedGenre = (req, res) => {
   const year = req.query.year;
   const limit = req.query.limit;
   pool.query(
-    `SELECT g.name, COUNT(g.name) AS "count"
+    `SELECT g.name, release_date AS year, COUNT(g.name) AS "count"
       FROM metadata m, genres g
       where $$'$$ || CAST(g.id AS text) || $$'$$ = ANY(m.genres) AND EXTRACT(year from m.release_date) = $1
       GROUP BY g.name

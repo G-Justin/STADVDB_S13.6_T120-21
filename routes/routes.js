@@ -1,9 +1,7 @@
 const express = require("express");
-const path = require("path");
 const app = express();
-const db = require("../queries");
 const indexController = require('../controllers/indexcontroller.js');
-app.get('/', indexController.getIndex);
+app.get('/', indexController.getHighestGrossing);
 
 /* TODO: test
 app.get("/highestgrossing", db.getHighestGrossing); //ex: /highestgrossing?year=<YEAR>&limit=<NUMBER OF RESULTS>

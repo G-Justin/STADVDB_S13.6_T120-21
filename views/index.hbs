@@ -108,6 +108,7 @@
             </div>
           </div>
           <table id="test" class="table align-items-center table-flush">
+              <!--TODO: empty result condition-->
             <thead class="thead-light">
               <tr>
                 {{#each fields}}
@@ -137,13 +138,14 @@
               <h3 class="class=mb-0">Filter</h3>
             </div>
             <label class="form-control-label" for="input-year">Input Year</label>
-            <input id="input-year" class="form-control" type="text" placeholder="Year (e.g. 2010)"></input>
+            <!--TODO: Get year range of database-->
+            <input id="input-year" class="form-control" type="number" min="" max="" placeholder="Year (e.g. 2010)">{{yearInput}}</input>
             <label class="form-control-label" for="set-limit">Set Limit</label>
-            <input id="set-limit" class="form-control" type="text" placeholder="Limit (e.g. 10)"></input>
+            <input id="input-limit" class="form-control" type="number" placeholder="Limit (e.g. 10)">{{limitInput}}</input>
           </div>
         </div>
       </div>
-
+        <!--TODO: error message-->
       <!-- Footer -->
       <footer class="footer pt-0">
         <div class="row align-items-center justify-content-lg-between">
@@ -173,4 +175,4 @@
         </div>
       </footer>
     </div>
-  </div>
+  </div></div>

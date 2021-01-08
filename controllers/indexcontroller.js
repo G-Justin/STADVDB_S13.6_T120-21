@@ -1,7 +1,7 @@
 
 
 //!Test
-const getIndex = async(req, res) => {
+const getHighestGrossing = async(req, res) => {
     let data;
     let fields;
 
@@ -34,9 +34,7 @@ const getIndex = async(req, res) => {
         data = results.rows;
         fields = results.fields;
 
-        for (let i = 0; i < results.rows.length; i++) {
-            results.rows[i].year = results.rows[i].year.toISOString().split("-")[0];
-        }
+        convertToYear(data)
     } catch (error) {
         console.log('error');
         res.send(404);
@@ -51,6 +49,48 @@ const getIndex = async(req, res) => {
 
 };
 
+const getTopRateMovie = async(req, res) => {
+    let data;
+    let fields;
+
+    const year = req.query.year;
+    const limit = req.query.limit;
+
+    try {
+        let results =  await pgconnection.query(
+            `SELECT title, release_date AS year, vote_average, vote_count, 
+        ((DENSE_RANK() OVER(ORDER BY vote_count ASC))*vote_average) AS vote_score
+        FROM metadata
+        WHERE EXTRACT(year from metadata.release_date) = $1
+        ORDER BY vote_score DESC
+        LIMIT $2`
+                [year, limit]);
+
+        data = results.rows;
+        fields = results.fields;
+
+        convertToYear(data);
+    } catch (e) {
+        console.log(e);
+        res.sendStatus(404);
+    }
+
+    res.render('index', {
+        title: 'Top Rated Movies',
+        data: data,
+        fields: fields,
+        topRatedMovies: true
+    });
+}
+
+//TODO: other queries
+
+function convertToYear(rows) {
+    for (let i = 0; i < rows.length; i++) {
+        rows[i].year = rows[i].year.toISOString().split("-")[0];
+    }
+}
+
 module.exports = {
-    getIndex
+    getHighestGrossing
 }
