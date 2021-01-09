@@ -21,7 +21,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <meta name="description" content="Start your development with a Dashboard for Bootstrap 4.">
   <meta name="author" content="Creative Tim">
-  <title>Argon Dashboard - Free Dashboard for Bootstrap 4</title>
+  <title>{{ title }} | Movie Database</title>
   <script src="https://code.jquery.com/jquery-3.5.1.js" integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc="
     crossorigin="anonymous"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
@@ -43,12 +43,22 @@
   <!-- Page plugins -->
   <!-- Argon CSS -->
   <link rel="stylesheet" href="/assets/css/argon.css" type="text/css">
-    
+  <link rel+"stylesheet" href="/assets/css/style.css" type="text/css">
+
 </head>
 
 <body>
+  {{> sidenav}}
 
-  {{{body}}}
+  <!-- Main content -->
+  <div class="main-content" id="panel">
+    {{> header}}
+    <div class="container-fluid mt--6">
+      {{{body}}}
+
+      {{> footer}}
+    </div>
+  </div>
 
   <!-- Argon Scripts -->
   <!-- Core -->

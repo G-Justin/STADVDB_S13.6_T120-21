@@ -3,6 +3,11 @@ const app = express();
 const indexController = require('../controllers/indexcontroller.js');
 app.get('/', indexController.getHighestGrossing);
 
+app.get('/highestgrossing', indexController.getHighestGrossing);
+app.get('/topratedmovies', indexController.getTopRatedMovies);
+app.get('/mostproducedgenres', indexController.getMostProducedGenres);
+app.get('/topratedmoviegenres', indexController.getTopRatedMovieGenres);
+app.get('/topdirectorsofagenre', indexController.getTopDirectorsOfAGenre);
 /* TODO: test
 app.get("/highestgrossing", db.getHighestGrossing); //ex: /highestgrossing?year=<YEAR>&limit=<NUMBER OF RESULTS>
 app.get("/mostproducedgenre", db.getMostProducedGenre); //ex: /mostproducedgenre?year=<YEAR>&limit=<NUMBER OF RESULTS>

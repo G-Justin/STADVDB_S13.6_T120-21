@@ -1,178 +1,157 @@
-<!-- Sidenav -->
-<nav class="sidenav navbar navbar-vertical  fixed-left  navbar-expand-xs navbar-light bg-white" id="sidenav-main">
-  <div class="scrollbar-inner">
-    <!-- Brand -->
-    <div class="sidenav-header  align-items-center">
-      <a class="navbar-brand" href="javascript:void(0)">
-        <img src="assets/img/brand/blue.png" class="navbar-brand-img" alt="...">
-      </a>
-    </div>
-    <div class="navbar-inner">
-      <!-- Collapse -->
-      <div class="collapse navbar-collapse" id="sidenav-collapse-main">
-        <!-- Nav items -->
-        <ul class="navbar-nav">
-          <li class="nav-item">
-            <a class="nav-link active" href="examples/dashboard.html">
-              <i class="ni ni-tv-2 text-primary"></i>
-              <span class="nav-link-text">Films</span>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="examples/icons.html">
-              <i class="ni ni-planet text-orange"></i>
-              <span class="nav-link-text">Genres</span>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="examples/map.html">
-              <i class="ni ni-glasses-2 text-primary"></i>
-              <span class="nav-link-text">Directors</span>
-            </a>
-          </li>
-        </ul>
-        <!-- Divider -->
-        <hr class="my-3">
-      </div>
-    </div>
-  </div>
-</nav>
-<!-- Main content -->
-<div class="main-content" id="panel">
-  <!-- Topnav -->
-  <nav class="navbar navbar-top navbar-expand navbar-dark bg-primary border-bottom">
-    <div class="container-fluid">
-      <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        <!-- Search form -->
-        <form class="navbar-search navbar-search-light form-inline mr-sm-3" id="navbar-search-main">
-          <div class="form-group mb-0">
-            <div class="input-group input-group-alternative input-group-merge">
-              <div class="input-group-prepend">
-                <span class="input-group-text"><i class="fas fa-search"></i></span>
-              </div>
-              <input class="form-control" placeholder="Search" type="text">
-            </div>
-          </div>
-          <button type="button" class="close" data-action="search-close" data-target="#navbar-search-main"
-            aria-label="Close">
-            <span aria-hidden="true">×</span>
-          </button>
-        </form>
-        <!-- Navbar links -->
-        <ul class="navbar-nav align-items-center  ml-md-auto ">
-          <li class="nav-item d-xl-none">
-            <!-- Sidenav toggler -->
-            <div class="pr-3 sidenav-toggler sidenav-toggler-dark" data-action="sidenav-pin"
-              data-target="#sidenav-main">
-              <div class="sidenav-toggler-inner">
-                <i class="sidenav-toggler-line"></i>
-                <i class="sidenav-toggler-line"></i>
-                <i class="sidenav-toggler-line"></i>
-              </div>
-            </div>
-          </li>
+<!-- Page content -->
+<div class="row">
+  <div class="col-xl-8">
+    <div class="card card-header border-0">
 
-        </ul>
-      </div>
+      <table id="test" class="table align-items-center table-flush display nowrap" style="width:100%">
+        <!--TODO: empty result condition-->
+        <thead class="thead-light">
+          <tr>
+            {{#each fields}}
+            <th>{{name}}</th>
+            {{/each}}
+          </tr>
+        </thead>
+        <tbody>
+
+          {{#if highestGrossing}}
+          {{#each data}}
+          <tr>
+            <td>{{title}}</td>
+            <td>{{gross_income}}</td>
+
+          </tr>
+          {{/each}}
+          {{/if}}
+
+          {{#if topRatedMovies}}
+          {{#each data}}
+          <tr>
+            <td>{{title}}</td>
+            <td>{{vote_average}}</td>
+            <td>{{vote_count}}</td>
+            <td>{{vote_score}}</td>
+          </tr>
+          {{/each}}
+          {{/if}}
+
+          {{#if mostProducedGenres}}
+          {{#each data}}
+          <tr>
+            <td>{{name}}</td>
+            <td>{{count}}</td>
+          </tr>
+          {{/each}}
+          {{/if}}
+
+          {{#if topRatedMovieGenres}}
+          {{#each data}}
+          <tr>
+            <td>{{title}}</td>
+            <td>{{tagline}}</td>
+            <td>{{runtime}}</td>
+            <td>{{release_date}}</td>
+            <td>{{overview}}</td>
+            <td>{{popularity}}</td>
+            <td>{{vote_average}}</td>
+            <td>{{vote_count}}</td>
+            <td>{{budget}}</td>
+            <td>{{revenue}}</td>
+            <td>{{crew}}</td>
+            <td>{{vote_average}}</td>
+            <td>{{vote_count}}</td>
+            <td>{{vote_score}}</td>
+          </tr>
+          {{/each}}
+          {{/if}}
+
+          {{#if topDirectorsOfAGenre}}
+          {{#each data}}
+          <tr>
+            <td>{{name}}</td>
+            <td>{{vote_average}}</td>
+            <td>{{vote_score}}</td>
+          </tr>
+          {{/each}}
+          {{/if}}
+
+
+
+        </tbody>
+      </table>
     </div>
-  </nav>
-  <!-- Header -->
-  <div class="header bg-primary pb-6">
-    <div class="container-fluid">
-      <div class="header-body">
-        <div class="row align-items-center py-4">
-          <div class="col-lg-6 col-7">
-            <h6 class="h2 text-white d-inline-block mb-0">Default</h6>
-            <nav aria-label="breadcrumb" class="d-none d-md-inline-block ml-md-4">
-              <ol class="breadcrumb breadcrumb-links breadcrumb-dark">
-                <li class="breadcrumb-item"><a href="#"><i class="fas fa-home"></i></a></li>
-                <li class="breadcrumb-item"><a href="#">Dashboards</a></li>
-                <li class="breadcrumb-item active" aria-current="page">Default</li>
-              </ol>
-            </nav>
-          </div>
+  </div>
+  <div class="col-xl-4">
+    <div class="card card-header border-0">
+      <div class="card-header border-0">
+        <div class="row align-items-center">
+          <h3 class="class=mb-0">Filter</h3>
         </div>
+        <form method="GET" id={{formTitle}} name={{formTitle}} action={{formAction}}>
+
+          {{#if year}}
+            <label class="form-control-label mt-2" for="input-year">Input Year (Empty for any year)</label>
+            <input id="year-input" name="year-input" class="form-control" type="number" min="1951" max="2017"
+              placeholder="Between 1951 - 2017"></input>
+          {{/if}}
+
+          {{#if genre}}
+            <label class="form-control-label mt-2" for="set-limit">Genre</label>
+              <select id="genre-input" name="genre-input" class="selectpicker form-control">
+                <option>Action</option>
+                <option>Adventure</option>
+                <option>Comedy</option>
+                <option>Crime</option>
+                <option>Documentary</option>
+                <option>Drama</option>
+                <option>Horror</option>
+                <option>Thriller</option>
+                <option>Romance</option>
+                <option>Science Fiction</option>
+              </select>
+          {{/if}}
+
+
+          <label class="form-control-label mt-2" for="set-limit">Set Limit</label>
+          <input id="limit-input" name="limit-input" class="form-control" type="number" placeholder="Limit (e.g. 10)"
+            min="1" max="443434343434"></input>
+          <button class="btn btn-danger mt-4" type="submit">Submit</button>
+        </form>
+        <p id="error-message"></p>
       </div>
     </div>
   </div>
-  <!-- Page content -->
-  <div class="container-fluid mt--6">
-    <div class="row">
-      <div class="col-xl-8">
-        <div class="card card-header border-0">
-          <div class="card-header">
-            <div class="row align-items-center">
-              <div class="col">
-                <h3 class="mb-0">Highest Grossing Films</h3>
-              </div>
+</div>
+<!--
+<div class="row">
+  <div class="col-xl-12">
+    <div class="card card-header border-0">
+      <div class="card-header border-0">
+        <div class="row align-items-center">
+          <h3 class="class=mb-0">Filter</h3>
+        </div>
+
+        <form method="GET" id={{formTitle}} name={{formTitle}} action={{formAction}}>
+          <div class="row">
+            <div class="col-xl-5">
+              <label class="form-control-label mb-0" for="input-year">Input Year (Empty for any year)</label>
+              <input id="year-input" name="year-input" class="form-control" type="number" min="1951" max="2017"
+                placeholder="Between 1951 - 2017"></input>
+            </div>
+            <div class="col-xl-5">
+              <label class="form-control-label mb-0" for="set-limit">Set Limit</label>
+              <input id="limit-input" name="limit-input" class="form-control" type="number"
+                placeholder="Limit (e.g. 10)" min="1" max="443434343434"></input>
+            </div>
+            <div class="col-xl-2">
+              <button class="btn btn-danger mt-4" type="submit">Submit</button>
             </div>
           </div>
-          <table id="test" class="table align-items-center table-flush">
-              <!--TODO: empty result condition-->
-            <thead class="thead-light">
-              <tr>
-                {{#each fields}}
-                <th>{{name}}</th>
-                {{/each}}
-              </tr>
-            </thead>
-            <tbody>
-              {{#if highestGrossing}}
-              {{#each data}}
-              <tr>
-                <td>{{title}}</td>
-                <td>{{year}}</td>
-                <td>{{gross_income}}</td>
-              
-              </tr>
-              {{/each}}
-              {{/if}}
-            </tbody>
-          </table>
-        </div>
+        </form>
+        <p id="error-message"></p>
       </div>
-      <div class="col-xl-4">
-        <div class="card card-header border-0">
-          <div class="card-header border-0">
-            <div class="row align-items-center">
-              <h3 class="class=mb-0">Filter</h3>
-            </div>
-            <label class="form-control-label" for="input-year">Input Year</label>
-            <!--TODO: Get year range of database-->
-            <input id="input-year" class="form-control" type="number" min="" max="" placeholder="Year (e.g. 2010)">{{yearInput}}</input>
-            <label class="form-control-label" for="set-limit">Set Limit</label>
-            <input id="input-limit" class="form-control" type="number" placeholder="Limit (e.g. 10)">{{limitInput}}</input>
-          </div>
-        </div>
-      </div>
-        <!--TODO: error message-->
-      <!-- Footer -->
-      <footer class="footer pt-0">
-        <div class="row align-items-center justify-content-lg-between">
-          <div class="col-lg-6">
-            <div class="copyright text-center  text-lg-left  text-muted">
-              &copy; 2020 <a href="https://www.creative-tim.com" class="font-weight-bold ml-1" target="_blank">Creative
-                Tim</a>
-            </div>
-          </div>
-          <div class="col-lg-6">
-            <ul class="nav nav-footer justify-content-center justify-content-lg-end">
-              <li class="nav-item">
-                <a href="https://www.creative-tim.com" class="nav-link" target="_blank">Creative Tim</a>
-              </li>
-              <li class="nav-item">
-                <a href="https://www.creative-tim.com/presentation" class="nav-link" target="_blank">About Us</a>
-              </li>
-              <li class="nav-item">
-                <a href="http://blog.creative-tim.com" class="nav-link" target="_blank">Blog</a>
-              </li>
-              <li class="nav-item">
-                <a href="https://github.com/creativetimofficial/argon-dashboard/blob/master/LICENSE.md" class="nav-link"
-                  target="_blank">MIT License</a>
-              </li>
-            </ul>
-          </div>
-        </div>
-      </footer>
     </div>
-  </div></div>
+  </div>
+</div>
+-->
+<!--TODO: error message-->

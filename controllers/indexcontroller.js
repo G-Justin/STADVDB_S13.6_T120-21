@@ -4,85 +4,299 @@
 const getHighestGrossing = async(req, res) => {
     let data;
     let fields;
+    let parameters = [];
+    let tableTitle;
 
-    const year = "";
-    const limit = req.query.limit;
+    let year = req.query['year-input'];
+    let limit = req.query['limit-input'];
     
-    //right now for testing purposes, limit and year are placeholders
-    let query = (year.trim() === "") ? 
-    `
-        SELECT title, release_date AS year, revenue-budget AS gross_income
+    if (!limit) {
+        console.log('fired');
+        limit = 100; //default
+    } 
+
+    let query;
+    if (String(year).trim() === "" || year == null) {
+        tableTitle = '1951 to 2017';
+        query = 
+        `
+        SELECT title, revenue-budget AS gross_income
         FROM metadata
         ORDER BY gross_income DESC
-        LIMIT 10
-    `
-    :
+        LIMIT $1
+        `;
 
-    `
-        SELECT title, release_date AS year, revenue-budget AS gross_income
+        parameters.push(limit);
+    } else {
+        tableTitle = year;
+        query = `
+        SELECT title, revenue-budget AS gross_income
         FROM metadata
-        WHERE EXTRACT(year from metadata.release_date) = 2005
+        WHERE EXTRACT(year from metadata.release_date) = $1
         ORDER BY gross_income DESC
-        LIMIT 10
-    `;
+        LIMIT $2
+        `;
+
+        parameters.push(year);
+        parameters.push(limit);
+    }
     
-    
-    console.log(query);
     try {
-        let results = await pgconnection.query(query);
+        let results = await pgconnection.query(query, parameters);
 
         data = results.rows;
         fields = results.fields;
-
-        convertToYear(data)
     } catch (error) {
         console.log('error');
         res.send(404);
     }
 
     res.render('index', {
-        title: 'Movies Database',
+        title: 'Highest Grossing Films',
         data: data,
         fields: fields,
-        highestGrossing: true
+        highestGrossing: true,
+        formTitle: 'year-limit-form',
+        formAction: '/highestgrossing',
+        tableTitle: `Highest Grossing Films of ${tableTitle}`,
+        year: true
     });
 
 };
 
-const getTopRateMovie = async(req, res) => {
+const getTopRatedMovies = async(req, res) => {
     let data;
     let fields;
+    let parameters = [];
+    let tableTitle; 
 
-    const year = req.query.year;
-    const limit = req.query.limit;
+    let year = req.query['year-input'];
+    let limit = req.query['limit-input'];
+    
+    if (!limit) {
+        limit = 10; //default
+    } 
 
+    let query;
+    if (String(year).trim() === "" || year == null) {
+        tableTitle = '1951 to 2017';
+        query =`
+            SELECT title, vote_average, vote_count, 
+            ((DENSE_RANK() OVER(ORDER BY vote_count ASC))*vote_average) AS vote_score
+            FROM metadata
+            ORDER BY vote_score DESC
+            LIMIT $1
+            `;
+
+        parameters.push(limit);
+    } else {
+        tableTitle = year;
+        query = `
+            SELECT title, vote_average, vote_count, 
+            ((DENSE_RANK() OVER(ORDER BY vote_count ASC))*vote_average) AS vote_score
+            FROM metadata
+            WHERE EXTRACT(year from metadata.release_date) = $1
+            ORDER BY vote_score DESC
+            LIMIT $2
+            `;
+
+        parameters.push(year);
+        parameters.push(limit);
+    }
+    
     try {
-        let results =  await pgconnection.query(
-            `SELECT title, release_date AS year, vote_average, vote_count, 
-        ((DENSE_RANK() OVER(ORDER BY vote_count ASC))*vote_average) AS vote_score
-        FROM metadata
-        WHERE EXTRACT(year from metadata.release_date) = $1
-        ORDER BY vote_score DESC
-        LIMIT $2`
-                [year, limit]);
+        let results = await pgconnection.query(query, parameters);
+
+        data = results.rows;
+        fields = results.fields;
+           
+        for (let i = 0; i < data.length; i++) {
+            data[i].vote_score = data[i].vote_score.toFixed(2);
+        }
+    } catch (error) {
+        console.log('error');
+        res.send(404);
+    }
+
+    res.render('index', {
+        title: 'Top Rated Films',
+        data: data,
+        fields: fields,
+        topRatedMovies: true,
+        formTitle: 'year-limit-form',
+        formAction: '/topratedmovies',
+        tableTitle: `Top Rated Films of ${tableTitle}`,
+        year: true
+    });
+}
+
+const getMostProducedGenres = async(req, res) => {
+    let data;
+    let fields;
+    let parameters = [];
+    let tableTitle;
+
+    let year = req.query['year-input'];
+    let limit = req.query['limit-input'];
+    
+    if (!limit) {
+        limit = 10; //default
+    } 
+
+    let query;
+    if (String(year).trim() === "" || year == null) {
+        tableTitle = '1951 to 2017';
+        query =`
+            SELECT g.name, COUNT(g.name) AS "count"
+            FROM metadata m, genres g
+            where $$'$$ || CAST(g.id AS text) || $$'$$ = ANY(m.genres)
+            GROUP BY g.name
+            ORDER BY count DESC
+            LIMIT $1;      
+            `;
+
+        parameters.push(limit);
+    } else {
+        tableTitle = year;
+        query = `
+            SELECT g.name, COUNT(g.name) AS "count"
+            FROM metadata m, genres g
+            where $$'$$ || CAST(g.id AS text) || $$'$$ = ANY(m.genres) AND EXTRACT(year from m.release_date) = $1
+            GROUP BY g.name
+            ORDER BY count DESC
+            LIMIT $2;      
+            `;
+
+        parameters.push(year);
+        parameters.push(limit);
+    }
+    
+    try {
+        let results = await pgconnection.query(query, parameters);
 
         data = results.rows;
         fields = results.fields;
 
-        convertToYear(data);
-    } catch (e) {
-        console.log(e);
-        res.sendStatus(404);
+    } catch (error) {
+        console.log('error');
+        res.send(error);
     }
 
     res.render('index', {
-        title: 'Top Rated Movies',
+        title: 'Most Produced Genres',
         data: data,
         fields: fields,
-        topRatedMovies: true
+        mostProducedGenres: true,
+        formTitle: 'year-limit-form',
+        formAction: '/mostproducedgenres',
+        tableTitle: `Most Produced Genres of ${tableTitle}`,
+        year: true
     });
 }
 
+const getTopRatedMovieGenres = async(req, res) => {
+    let data;
+    let fields;
+
+    let genre = req.query['genre-input'];
+    let limit = req.query['limit-input'];
+
+    if (genre == null || genre.trim() === "") {
+        genre = 'Drama';    
+    }
+    
+    if (!limit) {
+        limit = 10; //default
+    } 
+ 
+    try {
+        let results = await pgconnection.query(`select 	title, tagline, runtime, release_date, overview, 
+            popularity, vote_average, vote_count, budget, revenue,
+            array(	select json_build_object('name', name, 'job', job) from crew c 
+            where c.movie_id = m.id and (position('Writer' in job) > 0 
+            or position('Director' in job) > 0))
+            AS crew,
+            vote_average, vote_count,
+            ((DENSE_RANK() OVER(ORDER BY vote_count ASC))*vote_average) AS vote_score 
+            from metadata m, genres g 
+            where g.name = $1 AND $$'$$ || CAST(g.id as text) || $$'$$ = ANY(genres)
+            order by vote_score DESC 
+            Limit $2;
+            `, [genre, limit]);
+
+        data = results.rows;
+        fields = results.fields;
+
+        for (let i = 0; i < data.length; i++) {
+            data[i].vote_score = data[i].vote_score.toFixed(2);
+        }
+    } catch (error) {
+        console.log('error');
+        res.send(error);
+    }
+
+    res.render('index', {
+        title: 'Top Rated Genres',
+        data: data,
+        fields: fields,
+        topRatedMovieGenres: true,
+        formTitle: 'genre-limit-form',
+        formAction: '/topratedmoviegenres',
+        tableTitle: `Top Rated ${genre}`,
+        genre: true
+    });
+}
+
+const getTopDirectorsOfAGenre = async(req, res) => {
+    let data;
+    let fields;
+
+    let genre = req.query['genre-input'];
+    let limit = req.query['limit-input'];
+
+    if (genre == null || genre.trim() === "") {
+        genre = 'Drama';    
+    }
+    
+    if (!limit) {
+        limit = 10; //default
+    } 
+ 
+    try {
+        let results = await pgconnection.query(`
+            SELECT c.name, m.vote_average, ((DENSE_RANK() OVER(ORDER BY vote_count ASC))*vote_average) AS vote_score
+            FROM crew c, metadata m, genres g
+            WHERE c.movie_id = m.id 
+            AND $$'$$ || CAST(g.id AS text) || $$'$$ = ANY(m.genres) 
+            AND c.job = 'Director' 
+            AND g.name = $1
+            ORDER BY vote_score DESC
+            LIMIT $2;
+            `, [genre, limit]);
+
+
+        data = results.rows;
+        fields = results.fields;
+
+        for (let i = 0; i < data.length; i++) {
+            data[i].vote_score = data[i].vote_score.toFixed(2);
+        }
+    } catch (error) {
+        console.log('error');
+        res.send(error);
+    }
+
+    res.render('index', {
+        title: 'Top Directors of a Genre',
+        data: data,
+        fields: fields,
+        topDirectorsOfAGenre: true,
+        formTitle: 'genre-limit-form',
+        formAction: '/topdirectorsofagenre',
+        tableTitle: `Top Directors of ${genre}`,
+        genre: true
+    });
+}
 //TODO: other queries
 
 function convertToYear(rows) {
@@ -92,5 +306,9 @@ function convertToYear(rows) {
 }
 
 module.exports = {
-    getHighestGrossing
+    getHighestGrossing,
+    getTopRatedMovies,
+    getMostProducedGenres,
+    getTopRatedMovieGenres,
+    getTopDirectorsOfAGenre
 }

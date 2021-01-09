@@ -1,31 +1,43 @@
 jQuery( function () {
 
-    const MAX_YEAR = 9999; //Arbitrary
-    const MIN_YEAR = 0;
+    const MAX_YEAR = 2017; //Arbitrary
+    const MIN_YEAR = 1951;
     const MAX_LIMIT = Number.MAX_SAFE_INTEGER;
-    const MIN_LIMIT = 0;
+    const MIN_LIMIT = 1;
     const GENRES = [];
     const MAX_STRING_LENGTH = 100;
 
     $('#test').DataTable({
         "order": [],
+        "scrollX": true
     });
 
+    /*
     $('#year-limit-form').on('submit', (e) => {
-        const year = $('#year-input').val().trim();
-        const limit = $('#limit-input').val().trim();
+        
+        const errorMessage = $('#error-message');
+        const year = $('#year-input').val();
+        const limit = $('#limit-input').val();
 
-        if (year > MAX_YEAR || year < MIN_YEAR) {
-            //TODO: Error message
-            e.preventDefault();
+        if (year.trim() !== "") {
+            if (Number(year) > MAX_YEAR || Number(year) < MIN_YEAR) {
+                errorMessage.text('Year exceeds 1951 - 2017 range!');
+                e.preventDefault();
+                return;
+            }
         }
 
-        if (limit > MAX_LIMIT || limit < MIN_LIMIT) {
-
-            e.preventDefault();
+        if (limit.trim() === "") {
+            if (Number(limit) > MAX_LIMIT || Number(limit) < MIN_LIMIT) {
+                errorMessage.text('Invalid limit input!');
+                e.preventDefault();
+                return;
+            }
         }
-    });
 
+    }); */
+
+    /*
     $('#genre-limit-form').on('submit', (e) => {
         const genre = $('#genre-input').val().trim();
         const limit = $('#limit-input').val().trim();
@@ -40,6 +52,7 @@ jQuery( function () {
             e.preventDefault();
         }
     });
+    */
 
     $('#keyword-form').on('submit', (e) => {
         const keyword = $('#keyword-input').val().trim();

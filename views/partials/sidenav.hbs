@@ -1,0 +1,51 @@
+<!-- Sidenav -->
+<nav class="sidenav navbar navbar-vertical  fixed-left  navbar-expand-xs navbar-light bg-white" id="sidenav-main">
+  <div class="scrollbar-inner">
+    <!-- Brand -->
+    <div class="sidenav-header  align-items-center">
+      <a class="navbar-brand" href="javascript:void(0)">
+        <img src="assets/img/brand/blue.png" class="navbar-brand-img" alt="...">
+      </a>
+    </div>
+    <div class="navbar-inner">
+      <!-- Collapse -->
+      <div class="collapse navbar-collapse" id="sidenav-collapse-main">
+        <!-- Nav items -->
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link {{#if highestGrossing}}active{{/if}}" href="/highestgrossing">
+              <i class="ni ni-money-coins text-primary"></i>
+              <span class="nav-link-text">Highest Grossing Films</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link {{#if topRatedMovies}}active{{/if}}" href="/topratedmovies">
+              <i class="ni ni-like-2 text-primary"></i>
+              <span class="nav-link-text">Top Rated Films</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link {{#if mostProducedGenres}}active{{/if}}" href="/mostproducedgenres">
+              <i class="ni ni-tag text-primary"></i>
+              <span class="nav-link-text">Most Produced Genres</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link {{#if topRatedMovieGenres}}active{{/if}}" href="/topratedmoviegenres">
+              <i class="ni ni-satisfied text-primary"></i>
+              <span class="nav-link-text">Top Rated Genres</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link {{#if topDirectorsOfAGenre}}active{{/if}}" href="/topdirectorsofagenre">
+              <i class="ni ni-glasses-2 text-primary"></i>
+              <span class="nav-link-text">Top Directors of a Genre</span>
+            </a>
+          </li>
+        </ul>
+        <!-- Divider -->
+        <hr class="my-3">
+      </div>
+    </div>
+  </div>
+</nav>
