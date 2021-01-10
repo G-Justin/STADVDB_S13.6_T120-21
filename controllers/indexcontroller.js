@@ -83,7 +83,7 @@ const getTopRatedMovies = async(req, res) => {
     if (String(year).trim() === "" || year == null) {
         tableTitle = '1951 to 2017';
         query =`
-            SELECT title, vote_average, vote_count, 
+            SELECT title, vote_average AS vote_count, 
             ((DENSE_RANK() OVER(ORDER BY vote_count ASC))*vote_average) AS vote_score
             FROM metadata
             ORDER BY vote_score DESC
@@ -94,10 +94,10 @@ const getTopRatedMovies = async(req, res) => {
     } else {
         tableTitle = year;
         query = `
-            SELECT title, vote_average, vote_count, 
+            SELECT title, vote_average AS vote_count, 
             ((DENSE_RANK() OVER(ORDER BY vote_count ASC))*vote_average) AS vote_score
             FROM metadata
-            WHERE EXTRACT(year from metadata.release_date) = $1
+            WHERE EXTRACT(YEAR from release_date) = $1
             ORDER BY vote_score DESC
             LIMIT $2
             `;
