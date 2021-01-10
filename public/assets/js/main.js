@@ -12,6 +12,11 @@ jQuery( function () {
         "scrollX": true
     });
 
+    function getMovie(id) {
+        alert('hello')
+        window.open('/movie/' + id);
+    }
+
     /*
     $('#year-limit-form').on('submit', (e) => {
         

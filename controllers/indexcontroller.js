@@ -371,11 +371,12 @@ const getMoviesFromKeyword = async(req, res) => {
 
 
         data = results.rows;
-        fields = [{name: 'id'}, {name: 'title'}, {name: 'keywords'}];
+        fields = [{name: 'title'}, {name: 'keywords'}];
         
     } catch (error) {
         console.log('error');
         res.send(error);
+        return;
     }
 
     res.render('index', {
@@ -391,6 +392,12 @@ const getMoviesFromKeyword = async(req, res) => {
 }
 
 const getMovie = async(req, res) => {
+    let data;
+    let id = req.params.id;
+    if (id == null) {
+        res.send('Movie not found!');
+        return;
+    }
 
     let query = `with jobIDs as (
         select id from jobs 
@@ -400,18 +407,46 @@ const getMovie = async(req, res) => {
         vote_average, vote_count, budget, revenue,
         ( select array_agg(name) from genres g 
             join movies_genres mg on g.id = mg.genre_id
-            where mg.movie_id = m.id ),
+            where mg.movie_id = m.id ) AS genres,
         ( select array_agg(name) from keywords k 
             join movies_keywords mk on k.id = mk.keyword_id
-            where mk.movie_id = m.id ),
+            where mk.movie_id = m.id ) AS keywords,
         ( select array_agg(name) from production_companies p 
             join movies_pcs mp on p.id = mp.pc_id
-            where mp.movie_id = m.id ),
+            where mp.movie_id = m.id ) AS companies,
         ( select array_agg(json_build_object('name', c.name, 'job', j.name)) 
             from crew c join jobs j on c.job = j.id 
-            where j.id = ANY (select * from jobIDs) and c.movie_id = m.id )
+            where j.id = ANY (select * from jobIDs) and c.movie_id = m.id ) AS crew
     from metadata m
-    where m.id = X;`
+    where m.id = $1;`;
+
+    try {
+        let results = await pgconnection.query(query, [id]);
+
+        data = results.rows[0];
+       
+    } catch (error) {
+        console.log('error');
+        res.send('Movie not found!')
+        return;
+    }
+
+    res.render('details', {
+        title: data.title,
+        tableTitle: data.title,
+        tagline: data.tagline,
+        runtime: data.runtime,
+        genres: data.genres,
+        keywords: data.keywords,
+        companies: data.companies,
+        crew: data.crew,
+        budget: data.budget,
+        revenue: data.revenue,
+        vote_count: data.vote_count,
+        vote_average: data.vote_average,
+        release_date: data.release_date.toISOString().split("-")[0],
+        overview: data.overview
+    });
 }
 //TODO: other queries
 
@@ -427,5 +462,6 @@ module.exports = {
     getMostProducedGenres,
     getTopRatedMovieGenres,
     getTopDirectorsOfAGenre,
-    getMoviesFromKeyword
+    getMoviesFromKeyword,
+    getMovie
 }

@@ -9,6 +9,7 @@ app.get('/mostproducedgenres', indexController.getMostProducedGenres);
 app.get('/topratedmoviegenres', indexController.getTopRatedMovieGenres);
 app.get('/topdirectorsofagenre', indexController.getTopDirectorsOfAGenre);
 app.get('/moviesfromkeyword', indexController.getMoviesFromKeyword);
+app.get('/movie/:id', indexController.getMovie);
 /* TODO: test
 app.get("/highestgrossing", db.getHighestGrossing); //ex: /highestgrossing?year=<YEAR>&limit=<NUMBER OF RESULTS>
 app.get("/mostproducedgenre", db.getMostProducedGenre); //ex: /mostproducedgenre?year=<YEAR>&limit=<NUMBER OF RESULTS>

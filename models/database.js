@@ -1,7 +1,7 @@
-const { Client } = require("pg");
+const { Client, Pool } = require("pg");
 
 const connect = async () => {
-  const pgconnection = new Client({
+  /*const pgconnection = new Client({
     //*Template
     user: "avnadmin",
     password: "bcba6pfw9v5g6i68",
@@ -9,30 +9,29 @@ const connect = async () => {
     database: "movies_db",
     port: 14205,
     ssl: {rejectUnauthorized: false}
+  }); */
+
+  const pgconnection = new Pool({
+    user: "avnadmin",
+    password: "bcba6pfw9v5g6i68",
+    host: "pg-2e07fd4b-dlsu-26dd.aivencloud.com",
+    database: "movies_db",
+    port: 14205,
+    idleTimeoutMillis: 0,
+    connectionTimeoutMillis: 0,
+    ssl: {rejectUnauthorized: false}
   });
 
-  try {
-    await pgconnection.connect();
-    console.log("Successfully connected to PostgreSQL db");
-    global.pgconnection = pgconnection;
-  } catch (error) {
-    console.log(error);
-  }
+  pgconnection.connect((err, client, done) => {
+    if (err) {
+      console.log(err);
+      return;
+    }
 
- return;
-  try {
-    let rows = await pgconnection.query(` 
-    SELECT title, revenue-budget AS gross_income
-    FROM metadata
-    WHERE EXTRACT(year from metadata.release_date) = 2005
-    ORDER BY gross_income DESC
-    LIMIT 10 
-  `);
+    console.log('Connected successfully to db');
+  })
 
-  console.log(rows.rows);
-  } catch (error) {
-    console.log(error);
-  }
+  global.pgconnection = pgconnection;
   
 };
 

@@ -1,0 +1,65 @@
+<div class="container-fluid mt--6">
+    <div class="row">
+        <div class="col-xl-9 order-xl-1">
+            <div class="card">
+                <div class="card-header">
+                    <div class="row align-items-center">
+                        <div class="col-12">
+                            <h3 class="mb-0">{{overview}}</h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <h6 class="heading-small mb-4"><span class="notbold">"{{tagline}}"</span></h6>
+                    <h6 class="heading-small mb-4">Runtime: <span class="notbold">{{runtime}} minutes</span></h6>
+                    <h6 class="heading-small mb-4">Film Company:  <span class="notbold">{{companies}} </span></h6>
+                    <h6 class="heading-small mb-4">Year released: <span class="notbold"><h7>{{release_date}}</h7></span></h6>
+                    <hr class="my-4" />
+                    <h6 class="heading-small mb-4">Budget: <span class="notbold">{{budget}}</span></h6>
+                    <h6 class="heading-small mb-4">Revenue: <span class="notbold">{{revenue}}</span></h6>
+                    <hr class="my-4" />
+                    <h6 class="heading-small mb-4">People's Ratings</h6>
+                    <div class="row">
+                        <h6 class="heading-small mb-4 col-sm-5">Vote Count: <span class="notbold">{{vote_count}}</span></h7>
+                        <h6 class="heading-small mb-4 col-sm-7">Vote Average: <span class="notbold">{{vote_average}}</span></h7>
+                    </div>
+                    <hr class="my-4" />
+                    <h6 class="heading-small mb-4">Crew</h6>
+                    <div class="row">
+                        {{#each crew}}
+                        <h7 class="heading-small mb-4 col-sm-5">{{name}}</h7>
+                        <h7 class="heading-small mb-4 col-sm-7">{{job}}</h7>
+                        {{/each}}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 order-xl-1">
+            <div class="card">
+                <div class="card-header">
+                    <div class="row align-items-center">
+                        <div class="col-8">
+                            <h3 class="mb-0">Genres</h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <h6 class="heading-small mb-4 btn-sm btn-danger col-sm" style="width: 70%;">Science Fiction</h6>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header">
+                    <div class="row align-items-center">
+                        <div class="col-8">
+                            <h3 class="mb-0">Keywords</h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    {{#each keywords}}
+                    <h6 class="heading-small mb-4 col-sm" style="width: 70%;">{{this}}</h6>
+                    {{/each}}
+                </div>
+            </div>
+        </div>
+    </div>

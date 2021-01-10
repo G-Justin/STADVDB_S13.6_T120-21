@@ -73,8 +73,7 @@
           {{#if moviesFromKeyword}}
           {{#each data}}
           <tr>
-            <td>{{id}}</td>
-            <td>{{title}}</td>
+            <td><a href="" onclick="getMovie({{id}})">{{title}}</a></td>
             <td>{{array_agg}}</td>
           </tr>
           {{/each}}
@@ -133,6 +132,12 @@
     </div>
   </div>
 </div>
+
+<script>
+  function getMovie(id) {
+    window.open('/movie/' + id);
+  }
+</script>
 <!--
 <div class="row">
   <div class="col-xl-12">

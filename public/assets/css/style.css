@@ -2,6 +2,13 @@
     color: red;
 }
 
+.notbold{
+    font-weight:normal;
+}​
+
+a{
+    color: red !important;
+}
 /**
 div.dataTables_wrapper {
     width: 800px;
