@@ -66,6 +66,7 @@ const getHighestGrossing = async(req, res) => {
 
 };
 
+//*optimized
 const getTopRatedMovies = async(req, res) => {
     let data;
     let fields;
