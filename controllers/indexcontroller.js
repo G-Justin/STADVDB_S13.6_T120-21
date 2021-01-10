@@ -272,6 +272,7 @@ const getTopRatedMovieGenres = async(req, res) => {
     });
 }
 
+//*optimized
 const getTopDirectorsOfAGenre = async(req, res) => {
     let data;
     let fields;
@@ -289,19 +290,29 @@ const getTopDirectorsOfAGenre = async(req, res) => {
  
     try {
         let results = await pgconnection.query(`
-            SELECT c.name, m.vote_average, ((DENSE_RANK() OVER(ORDER BY vote_count ASC))*vote_average) AS vote_score
-            FROM crew c, metadata m, genres g
-            WHERE c.movie_id = m.id 
-            AND $$'$$ || CAST(g.id AS text) || $$'$$ = ANY(m.genres) 
-            AND c.job = 'Director' 
-            AND g.name = $1
-            ORDER BY vote_score DESC
-            LIMIT $2;
+        With movies_director as (
+            Select c.id as crew_id, c.name as crew_name, ((DENSE_RANK() OVER(ORDER BY m.vote_count ASC))*m.vote_average) as dense_rank_score
+            From crew c
+            Join metadata m on c.movie_id = m.id
+            Where c.job=1
+            and m.id in (
+                Select mg.movie_id
+                From movies_genres mg 
+                Join genres g on mg.genre_id = g.id 
+                Where g.name = $1
+            )
+            )
+            Select crew_name, avg(dense_rank_score) as vote_score
+            From movies_director
+            Group by crew_id, crew_name
+            Order by vote_score desc
+            Limit $2;
+            
             `, [genre, limit]);
 
 
         data = results.rows;
-        fields = results.fields;
+        fields = [{name: 'Name'}, {name: 'Vote Score'}];
 
         for (let i = 0; i < data.length; i++) {
             data[i].vote_score = data[i].vote_score.toFixed(2);
