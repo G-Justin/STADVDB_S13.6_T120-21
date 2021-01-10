@@ -3,10 +3,12 @@ const { Client } = require("pg");
 const connect = async () => {
   const pgconnection = new Client({
     //*Template
-    user: "admin",
-    password: "password",
-    host: "localhost",
-    database: "db_movies",
+    user: "avnadmin",
+    password: "bcba6pfw9v5g6i68",
+    host: "pg-2e07fd4b-dlsu-26dd.aivencloud.com",
+    database: "movies_db",
+    port: 14205,
+    ssl: {rejectUnauthorized: false}
   });
 
   try {

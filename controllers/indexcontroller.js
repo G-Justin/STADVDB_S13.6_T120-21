@@ -253,6 +253,10 @@ const getTopRatedMovieGenres = async(req, res) => {
         fields = results.fields;
 
         for (let i = 0; i < data.length; i++) {
+            data[i].crew = JSON.stringify(data[i].crew);
+        }
+
+        for (let i = 0; i < data.length; i++) {
             data[i].vote_score = data[i].vote_score.toFixed(2);
         }
     } catch (error) {
@@ -384,6 +388,30 @@ const getMoviesFromKeyword = async(req, res) => {
         tableTitle: `Movies from Keyword/s '${keyword}'`,
         keyword: true
     });
+}
+
+const getMovie = async(req, res) => {
+
+    let query = `with jobIDs as (
+        select id from jobs 
+        where position('Writer' in name) > 0 or position('Director' in name) > 0
+    )
+    select 	title, tagline, runtime, release_date, overview, 
+        vote_average, vote_count, budget, revenue,
+        ( select array_agg(name) from genres g 
+            join movies_genres mg on g.id = mg.genre_id
+            where mg.movie_id = m.id ),
+        ( select array_agg(name) from keywords k 
+            join movies_keywords mk on k.id = mk.keyword_id
+            where mk.movie_id = m.id ),
+        ( select array_agg(name) from production_companies p 
+            join movies_pcs mp on p.id = mp.pc_id
+            where mp.movie_id = m.id ),
+        ( select array_agg(json_build_object('name', c.name, 'job', j.name)) 
+            from crew c join jobs j on c.job = j.id 
+            where j.id = ANY (select * from jobIDs) and c.movie_id = m.id )
+    from metadata m
+    where m.id = X;`
 }
 //TODO: other queries
 
