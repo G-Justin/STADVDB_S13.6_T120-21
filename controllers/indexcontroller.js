@@ -1,6 +1,6 @@
 
 
-//!Test
+//*optimized
 const getHighestGrossing = async(req, res) => {
     let data;
     let fields;
@@ -24,6 +24,7 @@ const getHighestGrossing = async(req, res) => {
         FROM metadata
         ORDER BY gross_income DESC
         LIMIT $1
+
         `;
 
         parameters.push(limit);
@@ -32,9 +33,10 @@ const getHighestGrossing = async(req, res) => {
         query = `
         SELECT title, revenue-budget AS gross_income
         FROM metadata
-        WHERE EXTRACT(year from metadata.release_date) = $1
+        WHERE EXTRACT(YEAR from release_date) = $1
         ORDER BY gross_income DESC
         LIMIT $2
+
         `;
 
         parameters.push(year);
