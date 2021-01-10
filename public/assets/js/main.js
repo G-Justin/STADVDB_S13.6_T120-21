@@ -54,13 +54,14 @@ jQuery( function () {
     });
     */
 
+    /*
     $('#keyword-form').on('submit', (e) => {
         const keyword = $('#keyword-input').val().trim();
 
         if (keyword.length > MAX_STRING_LENGTH) {
             e.preventDefault();
         }
-    })
+    }) */
 
 
 

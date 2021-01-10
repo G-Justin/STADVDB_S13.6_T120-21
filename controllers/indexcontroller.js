@@ -297,6 +297,58 @@ const getTopDirectorsOfAGenre = async(req, res) => {
         genre: true
     });
 }
+
+
+//*optimized
+const getMoviesFromKeyword = async(req, res) => {
+    let data;
+    let fields;
+
+    let keyword = req.query['keyword-input'];
+    let limit = req.query['limit-input'];
+    if (keyword == null || keyword.trim() === "") {
+        keyword = "director";
+    }
+
+    if (!limit) {
+        limit = 10; //default
+    } 
+ 
+    try {
+        let results = await pgconnection.query(`
+            with keywordIDs as (
+                select id, name from keywords
+                where name ~ ('(^|(. ))' || $1 || '(( .)|$)')
+            )
+            
+            select m.id, m.title, array_agg(k.name)
+            from movies_keywords mk join metadata m on mk.movie_id = m.id 
+            join keywordIDs k on k.id = mk.keyword_id
+            group by m.id
+            limit $2
+
+            `, [keyword, limit]);
+
+
+        data = results.rows;
+        fields = [{name: 'id'}, {name: 'title'}, {name: 'keywords'}];
+        
+    } catch (error) {
+        console.log('error');
+        res.send(error);
+    }
+
+    res.render('index', {
+        title: 'Movies from Keyword/s',
+        data: data,
+        fields: fields,
+        moviesFromKeyword: true,
+        formTitle: 'keyword-form',
+        formAction: '/moviesfromkeyword',
+        tableTitle: `Movies from Keyword/s '${keyword}'`,
+        keyword: true
+    });
+}
 //TODO: other queries
 
 function convertToYear(rows) {
@@ -310,5 +362,6 @@ module.exports = {
     getTopRatedMovies,
     getMostProducedGenres,
     getTopRatedMovieGenres,
-    getTopDirectorsOfAGenre
+    getTopDirectorsOfAGenre,
+    getMoviesFromKeyword
 }

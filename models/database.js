@@ -6,7 +6,7 @@ const connect = async () => {
     user: "admin",
     password: "password",
     host: "localhost",
-    database: "movies",
+    database: "db_movies",
   });
 
   try {

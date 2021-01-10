@@ -75,6 +75,16 @@
           {{/each}}
           {{/if}}
 
+          {{#if moviesFromKeyword}}
+          {{#each data}}
+          <tr>
+            <td>{{id}}</td>
+            <td>{{title}}</td>
+            <td>{{array_agg}}</td>
+          </tr>
+          {{/each}}
+          {{/if}}
+
 
 
         </tbody>
@@ -90,13 +100,13 @@
         <form method="GET" id={{formTitle}} name={{formTitle}} action={{formAction}}>
 
           {{#if year}}
-            <label class="form-control-label mt-2" for="input-year">Input Year (Empty for any year)</label>
+            <label class="form-control-label mt-2" for="year-input">Input Year (Empty for any year)</label>
             <input id="year-input" name="year-input" class="form-control" type="number" min="1951" max="2017"
               placeholder="Between 1951 - 2017"></input>
           {{/if}}
 
           {{#if genre}}
-            <label class="form-control-label mt-2" for="set-limit">Genre</label>
+            <label class="form-control-label mt-2" for="genre-input">Genre</label>
               <select id="genre-input" name="genre-input" class="selectpicker form-control">
                 <option>Action</option>
                 <option>Adventure</option>
@@ -111,10 +121,16 @@
               </select>
           {{/if}}
 
+          {{#if keyword}}
+            <label class="form-control-label mt-2" for="keyword-input">Keyword</label>
+            <input id="keyword-input" name="keyword-input" class="form-control" type="text" placeholder="e.g woman director" maxlength="50" required></input>
+          {{/if}}
 
-          <label class="form-control-label mt-2" for="set-limit">Set Limit</label>
+          <label class="form-control-label mt-2" for="limit-input">Set Limit</label>
           <input id="limit-input" name="limit-input" class="form-control" type="number" placeholder="Limit (e.g. 10)"
-            min="1" max="443434343434"></input>
+              min="1" max="443434343434"></input>
+          
+
           <button class="btn btn-danger mt-4" type="submit">Submit</button>
         </form>
         <p id="error-message"></p>
