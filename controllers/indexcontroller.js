@@ -207,6 +207,8 @@ const getMostProducedGenres = async(req, res) => {
     });
 }
 
+
+//*optimized
 const getTopRatedMovieGenres = async(req, res) => {
     let data;
     let fields;
@@ -223,18 +225,28 @@ const getTopRatedMovieGenres = async(req, res) => {
     } 
  
     try {
-        let results = await pgconnection.query(`select 	title, tagline, runtime, release_date, overview, 
-            popularity, vote_average, vote_count, budget, revenue,
-            array(	select json_build_object('name', name, 'job', job) from crew c 
-            where c.movie_id = m.id and (position('Writer' in job) > 0 
-            or position('Director' in job) > 0))
-            AS crew,
-            vote_average, vote_count,
-            ((DENSE_RANK() OVER(ORDER BY vote_count ASC))*vote_average) AS vote_score 
-            from metadata m, genres g 
-            where g.name = $1 AND $$'$$ || CAST(g.id as text) || $$'$$ = ANY(genres)
-            order by vote_score DESC 
-            Limit $2;
+        let results = await pgconnection.query(`
+       
+        with jobIDs as (
+        select id from jobs 
+        where position('Writer' in name) > 0 or position('Director' in name) > 0
+        )
+        select 	title, tagline, runtime, release_date, overview, 
+        vote_average, vote_count, budget, revenue,
+        ( select array_agg(json_build_object('name', c.name, 'job', j.name)) 
+        from crew c join jobs j on c.job = j.id 
+            where j.id = ANY (select * from jobIDs) and c.movie_id = m.id )
+        AS crew,
+        ((DENSE_RANK() OVER(ORDER BY vote_count ASC))*vote_average) AS vote_score 
+        from metadata m
+        where m.id in (
+            Select mg.movie_id
+            From movies_genres mg 
+            Join genres g on mg.genre_id = g.id 
+            Where g.name = $1
+        )
+        order by vote_score DESC 
+        Limit $2;
             `, [genre, limit]);
 
         data = results.rows;
