@@ -23,7 +23,7 @@ const getHighestGrossing = async(req, res) => {
         SELECT title, revenue-budget AS gross_income
         FROM metadata
         ORDER BY gross_income DESC
-        LIMIT $1
+        LIMIT $1;
 
         `;
 
@@ -35,7 +35,7 @@ const getHighestGrossing = async(req, res) => {
         FROM metadata
         WHERE EXTRACT(YEAR from release_date) = $1
         ORDER BY gross_income DESC
-        LIMIT $2
+        LIMIT $2;
 
         `;
 
@@ -88,7 +88,7 @@ const getTopRatedMovies = async(req, res) => {
             ((DENSE_RANK() OVER(ORDER BY vote_count ASC))*vote_average) AS vote_score
             FROM metadata
             ORDER BY vote_score DESC
-            LIMIT $1
+            LIMIT $1;
             `;
 
         parameters.push(limit);
@@ -100,7 +100,7 @@ const getTopRatedMovies = async(req, res) => {
             FROM metadata
             WHERE EXTRACT(YEAR from release_date) = $1
             ORDER BY vote_score DESC
-            LIMIT $2
+            LIMIT $2;
             `;
 
         parameters.push(year);
@@ -133,6 +133,7 @@ const getTopRatedMovies = async(req, res) => {
     });
 }
 
+//*optimized
 const getMostProducedGenres = async(req, res) => {
     let data;
     let fields;
@@ -150,24 +151,33 @@ const getMostProducedGenres = async(req, res) => {
     if (String(year).trim() === "" || year == null) {
         tableTitle = '1951 to 2017';
         query =`
-            SELECT g.name, COUNT(g.name) AS "count"
-            FROM metadata m, genres g
-            where $$'$$ || CAST(g.id AS text) || $$'$$ = ANY(m.genres)
+            SELECT g.name, COUNT(g.name) AS count
+            FROM genres g 
+            JOIN movies_genres
+            ON genre_id = g.id
+            JOIN metadata m
+            ON movie_id = m.id
             GROUP BY g.name
             ORDER BY count DESC
-            LIMIT $1;      
+            LIMIT $1;
+              
             `;
 
         parameters.push(limit);
     } else {
         tableTitle = year;
         query = `
-            SELECT g.name, COUNT(g.name) AS "count"
-            FROM metadata m, genres g
-            where $$'$$ || CAST(g.id AS text) || $$'$$ = ANY(m.genres) AND EXTRACT(year from m.release_date) = $1
+            SELECT g.name, COUNT(g.name) AS count
+            FROM genres g 
+            JOIN movies_genres
+            ON genre_id = g.id
+            JOIN metadata m
+            ON movie_id = m.id
+            WHERE EXTRACT(YEAR from release_date) = $1
             GROUP BY g.name
             ORDER BY count DESC
-            LIMIT $2;      
+            LIMIT $2;
+             
             `;
 
         parameters.push(year);
