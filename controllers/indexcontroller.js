@@ -100,6 +100,7 @@ const getTopRatedMovies = async(req, res) => {
             WHERE EXTRACT(YEAR from release_date) = $1
             ORDER BY vote_score DESC
             LIMIT $2;
+
             `;
 
         parameters.push(year);
