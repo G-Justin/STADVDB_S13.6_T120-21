@@ -227,30 +227,40 @@ const getTopRatedMovieGenres = async(req, res) => {
     try {
         let results = await pgconnection.query(`
        
-        with jobIDs as (
-        select id from jobs 
-        where position('Writer' in name) > 0 or position('Director' in name) > 0
-        )
-        select 	title, tagline, runtime, release_date, overview, 
+        select id,title, tagline, runtime, release_date, overview, 
         vote_average, vote_count, budget, revenue,
         ( select array_agg(json_build_object('name', c.name, 'job', j.name)) 
         from crew c join jobs j on c.job = j.id 
-            where j.id = ANY (select * from jobIDs) and c.movie_id = m.id )
+        where c.movie_id = m.id 
+        and (position('Writer' in j.name) > 0 or position('Director' in j.name) > 0)
+        )
         AS crew,
         ((DENSE_RANK() OVER(ORDER BY vote_count ASC))*vote_average) AS vote_score 
         from metadata m
         where m.id in (
-            Select mg.movie_id
-            From movies_genres mg 
-            Join genres g on mg.genre_id = g.id 
-            Where g.name = $1
+        Select mg.movie_id
+        From movies_genres mg 
+        Join genres g on mg.genre_id = g.id 
+        Where g.name = $1
         )
         order by vote_score DESC 
         Limit $2;
             `, [genre, limit]);
 
         data = results.rows;
-        fields = results.fields;
+        fields = [
+            {name: 'title'},
+            {name: 'tagline'},
+            {name: 'runtime'},
+            {name: 'release_date'},
+            {name: 'overview'},
+            {name: 'vote_average'},
+            {name: 'vote_count'},
+            {name: 'budget'},
+            {name: 'revenue'},
+            {name: 'crew'},
+            {name: 'vote_score'}
+            ];
 
         for (let i = 0; i < data.length; i++) {
             data[i].crew = JSON.stringify(data[i].crew);
@@ -425,6 +435,7 @@ const getMovie = async(req, res) => {
         data = results.rows[0];
        
     } catch (error) {
+        console.log('error handled successfully');
         res.redirect(req.get('referer'));
         return;
     }

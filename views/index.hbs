@@ -46,7 +46,7 @@
           {{#if topRatedMovieGenres}}
           {{#each data}}
           <tr>
-            <td>{{title}}</td>
+              <td><a href="" onclick="getMovie({{id}}); return false;">{{title}}</a></td>
             <td>{{tagline}}</td>
             <td>{{runtime}}</td>
             <td>{{release_date}}</td>
