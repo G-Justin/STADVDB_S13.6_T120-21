@@ -44,7 +44,9 @@
                     </div>
                 </div>
                 <div class="card-body">
-                    <h6 class="heading-small mb-4 btn-sm btn-danger col-sm" style="width: 70%;">Science Fiction</h6>
+                    {{#each genres}}
+                        <h6 class="heading-small mb-4 btn-sm btn-danger col-sm" style="width: 70%;">{{this}}</h6>
+                    {{/each}}
                 </div>
             </div>
             <div class="card">
