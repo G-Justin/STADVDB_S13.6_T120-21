@@ -11,8 +11,7 @@ const getHighestGrossing = async(req, res) => {
     let limit = req.query['limit-input'];
     
     if (!limit) {
-        console.log('fired');
-        limit = 100; //default
+        limit = 10; //default
     } 
 
     let query;
@@ -49,8 +48,8 @@ const getHighestGrossing = async(req, res) => {
         data = results.rows;
         fields = results.fields;
     } catch (error) {
-        console.log('error');
-        res.send(404);
+        res.redirect(req.get('referer'));
+        return;
     }
 
     res.render('index', {
@@ -117,8 +116,8 @@ const getTopRatedMovies = async(req, res) => {
             data[i].vote_score = data[i].vote_score.toFixed(2);
         }
     } catch (error) {
-        console.log('error');
-        res.send(404);
+        res.redirect(req.get('referer'));
+        return;
     }
 
     res.render('index', {
@@ -191,8 +190,8 @@ const getMostProducedGenres = async(req, res) => {
         fields = results.fields;
 
     } catch (error) {
-        console.log('error');
-        res.send(error);
+        res.redirect(req.get('referer'));
+        return;
     }
 
     res.render('index', {
@@ -260,8 +259,8 @@ const getTopRatedMovieGenres = async(req, res) => {
             data[i].vote_score = data[i].vote_score.toFixed(2);
         }
     } catch (error) {
-        console.log('error');
-        res.send(error);
+        res.redirect(req.get('referer'));
+        return;
     }
 
     res.render('index', {
@@ -322,8 +321,8 @@ const getTopDirectorsOfAGenre = async(req, res) => {
             data[i].vote_score = data[i].vote_score.toFixed(2);
         }
     } catch (error) {
-        console.log('error');
-        res.send(error);
+        res.redirect(req.get('referer'));
+        return;
     }
 
     res.render('index', {
@@ -374,8 +373,7 @@ const getMoviesFromKeyword = async(req, res) => {
         fields = [{name: 'title'}, {name: 'keywords'}];
         
     } catch (error) {
-        console.log('error');
-        res.send(error);
+        res.redirect(req.get('referer'));
         return;
     }
 
@@ -426,8 +424,7 @@ const getMovie = async(req, res) => {
         data = results.rows[0];
        
     } catch (error) {
-        console.log('error');
-        res.send('Movie not found!')
+        res.redirect(req.get('referer'));
         return;
     }
 

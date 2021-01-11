@@ -15,7 +15,7 @@ const connect = async () => {
     user: "avnadmin",
     password: "bcba6pfw9v5g6i68",
     host: "pg-2e07fd4b-dlsu-26dd.aivencloud.com",
-    database: "movies_db",
+    database: "db_movies",
     port: 14205,
     idleTimeoutMillis: 0,
     connectionTimeoutMillis: 0,
