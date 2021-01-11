@@ -18,7 +18,7 @@
           {{#each data}}
           <tr>
               <td><a href="" onclick="getMovie({{id}}); return false;">{{title}}</a></td>
-            <td>{{gross_income}}</td>
+            <td>${{gross_income}}</td>
 
           </tr>
           {{/each}}
@@ -48,13 +48,13 @@
           <tr>
               <td><a href="" onclick="getMovie({{id}}); return false;">{{title}}</a></td>
             <td>{{tagline}}</td>
-            <td>{{runtime}}</td>
+            <td>{{runtime}} mins</td>
             <td>{{release_date}}</td>
             <td>{{overview}}</td>
             <td>{{vote_average}}</td>
             <td>{{vote_count}}</td>
-            <td>{{budget}}</td>
-            <td>{{revenue}}</td>
+            <td>${{budget}}</td>
+            <td>${{revenue}}</td>
             <td>{{crew}}</td>
             <td>{{vote_score}}</td>
           </tr>
