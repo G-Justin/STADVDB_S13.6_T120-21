@@ -19,7 +19,7 @@ const getHighestGrossing = async(req, res) => {
         tableTitle = '1951 to 2017';
         query = 
         `
-        SELECT title, revenue-budget AS gross_income
+        SELECT id, title, revenue-budget AS gross_income
         FROM metadata
         ORDER BY gross_income DESC
         LIMIT $1;
@@ -30,7 +30,7 @@ const getHighestGrossing = async(req, res) => {
     } else {
         tableTitle = year;
         query = `
-        SELECT title, revenue-budget AS gross_income
+        SELECT id, title, revenue-budget AS gross_income
         FROM metadata
         WHERE EXTRACT(YEAR from release_date) = $1
         ORDER BY gross_income DESC
@@ -46,7 +46,7 @@ const getHighestGrossing = async(req, res) => {
         let results = await pgconnection.query(query, parameters);
 
         data = results.rows;
-        fields = results.fields;
+        fields = [{name: 'title'}, {name: 'gross_income'}];
     } catch (error) {
         res.redirect(req.get('referer'));
         return;
@@ -83,7 +83,7 @@ const getTopRatedMovies = async(req, res) => {
     if (String(year).trim() === "" || year == null) {
         tableTitle = '1951 to 2017';
         query =`
-            SELECT title, vote_average AS vote_count, 
+            SELECT id, title, vote_average AS vote_count, 
             ((DENSE_RANK() OVER(ORDER BY vote_count ASC))*vote_average) AS vote_score
             FROM metadata
             ORDER BY vote_score DESC
@@ -94,7 +94,7 @@ const getTopRatedMovies = async(req, res) => {
     } else {
         tableTitle = year;
         query = `
-            SELECT title, vote_average AS vote_count, 
+            SELECT id, title, vote_average AS vote_count, 
             ((DENSE_RANK() OVER(ORDER BY vote_count ASC))*vote_average) AS vote_score
             FROM metadata
             WHERE EXTRACT(YEAR from release_date) = $1
@@ -110,7 +110,7 @@ const getTopRatedMovies = async(req, res) => {
         let results = await pgconnection.query(query, parameters);
 
         data = results.rows;
-        fields = results.fields;
+        fields = [{name: 'tile'}, {name: 'vote_count'}, {name: 'vote_score'}];
            
         for (let i = 0; i < data.length; i++) {
             data[i].vote_score = data[i].vote_score.toFixed(2);

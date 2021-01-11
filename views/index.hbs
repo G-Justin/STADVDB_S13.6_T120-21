@@ -17,7 +17,7 @@
           {{#if highestGrossing}}
           {{#each data}}
           <tr>
-            <td>{{title}}</td>
+              <td><a href="" onclick="getMovie({{id}}); return false;">{{title}}</a></td>
             <td>{{gross_income}}</td>
 
           </tr>
@@ -27,7 +27,7 @@
           {{#if topRatedMovies}}
           {{#each data}}
           <tr>
-            <td>{{title}}</td>
+              <td><a href="" onclick="getMovie({{id}}); return false;">{{title}}</a></td>
             <td>{{vote_count}}</td>
             <td>{{vote_score}}</td>
           </tr>
