@@ -1,5 +1,4 @@
 
-
 //*optimized
 const getHighestGrossing = async(req, res) => {
     let data;
