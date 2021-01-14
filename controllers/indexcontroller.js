@@ -252,7 +252,7 @@ const getTopRatedMovieGenres = async(req, res) => {
             {name: 'title'},
             {name: 'tagline'},
             {name: 'runtime'},
-            {name: 'release_date'},
+            {name: 'year'},
             {name: 'overview'},
             {name: 'vote_average'},
             {name: 'vote_count'},
@@ -269,6 +269,8 @@ const getTopRatedMovieGenres = async(req, res) => {
         for (let i = 0; i < data.length; i++) {
             data[i].vote_score = data[i].vote_score.toFixed(2);
         }
+
+        convertToYear(data);
     } catch (error) {
         res.redirect(req.get('referer'));
         return;
@@ -459,7 +461,7 @@ const getMovie = async(req, res) => {
 
 function convertToYear(rows) {
     for (let i = 0; i < rows.length; i++) {
-        rows[i].year = rows[i].year.toISOString().split("-")[0];
+        rows[i].release_date = rows[i].release_date.toISOString().split("-")[0];
     }
 }
 
