@@ -144,7 +144,7 @@ const getMostProducedGenres = async(req, res) => {
     let limit = req.query['limit-input'];
     
     if (!limit) {
-        limit = 10; //default
+        limit = 20; //default
     } 
 
     let query;
