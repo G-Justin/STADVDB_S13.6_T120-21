@@ -1,0 +1,97 @@
+
+==Highest Grossing Movie==
+SELECT id, title, revenue-budget AS gross_income
+        FROM metadata
+        WHERE EXTRACT(YEAR from release_date) = $1
+        ORDER BY gross_income DESC
+        LIMIT $2;
+
+==Top Rated Movies==
+SELECT id, title, vote_average AS vote_count, 
+            ((DENSE_RANK() OVER(ORDER BY vote_count ASC))*vote_average) AS vote_score
+            FROM metadata
+            WHERE EXTRACT(YEAR from release_date) = $1
+            ORDER BY vote_score DESC
+            LIMIT $2;
+
+==Most Produced Genres==
+SELECT g.name, COUNT(g.name) AS count
+            FROM genres g 
+            JOIN movies_genres
+            ON genre_id = g.id
+            JOIN metadata m
+            ON movie_id = m.id
+            WHERE EXTRACT(YEAR from release_date) = $1
+            GROUP BY g.name
+            ORDER BY count DESC
+            LIMIT $2;
+
+==Top Rated Movies per Genre==
+select id,title, tagline, runtime, release_date, overview, 
+        vote_average, vote_count, budget, revenue,
+        ( select array_agg(json_build_object('name', c.name, 'job', j.name)) 
+        from crew c join jobs j on c.job = j.id 
+        where c.movie_id = m.id 
+        and (position('Writer' in j.name) > 0 or position('Director' in j.name) > 0)
+        )
+        AS crew,
+        ((DENSE_RANK() OVER(ORDER BY vote_count ASC))*vote_average) AS vote_score 
+        from metadata m
+        where m.id in (
+        Select mg.movie_id
+        From movies_genres mg 
+        Join genres g on mg.genre_id = g.id 
+        Where g.name = $1
+        )
+        order by vote_score DESC 
+        Limit $2;
+
+==Top Directors of a Genre==
+With movies_director as (
+            Select c.id as crew_id, c.name as crew_name, ((DENSE_RANK() OVER(ORDER BY m.vote_count ASC))*m.vote_average) as dense_rank_score
+            From crew c
+            Join metadata m on c.movie_id = m.id
+            Where c.job=1
+            and m.id in (
+                Select mg.movie_id
+                From movies_genres mg 
+                Join genres g on mg.genre_id = g.id 
+                Where g.name = $1
+            )
+            )
+            Select crew_name, avg(dense_rank_score) as vote_score
+            From movies_director
+            Group by crew_id, crew_name
+            Order by vote_score desc
+            Limit $2;
+
+==Get Movies from Keyword==
+with keywordIDs as (
+                select id, name from keywords
+                where name ~ ('(^|(. ))' || $1 || '(( .)|$)')
+            )
+            
+            select m.id, m.title, array_agg(k.name)
+            from movies_keywords mk join metadata m on mk.movie_id = m.id 
+            join keywordIDs k on k.id = mk.keyword_id
+            group by m.id
+            limit $2
+
+==Movie Details(on movie title click)==
+select title, tagline, runtime, release_date, overview, 
+        vote_average, vote_count, budget, revenue,
+        ( select array_agg(name) from genres g 
+        join movies_genres mg on g.id = mg.genre_id
+        where mg.movie_id = m.id ) AS genres,
+        ( select array_agg(name) from keywords k 
+        join movies_keywords mk on k.id = mk.keyword_id
+        where mk.movie_id = m.id ) AS keywords,
+        ( select array_agg(name) from production_companies p 
+        join movies_pcs mp on p.id = mp.pc_id
+        where mp.movie_id = m.id ) AS companies,
+        ( select array_agg(json_build_object('name', c.name, 'job', j.name)) 
+        from crew c join jobs j on c.job = j.id 
+        where c.movie_id = m.id and 
+        (position('Writer' in j.name) > 0 or position('Director' in j.name) > 0) ) AS crew
+        from metadata m
+        where m.id =  $1;`
