@@ -59,7 +59,8 @@ const getHighestGrossing = async(req, res) => {
         formTitle: 'year-limit-form',
         formAction: '/highestgrossing',
         tableTitle: `Highest Grossing Films of ${tableTitle}`,
-        year: true
+        year: true,
+        limit: true
     });
 
 };
@@ -128,7 +129,8 @@ const getTopRatedMovies = async(req, res) => {
         formTitle: 'year-limit-form',
         formAction: '/topratedmovies',
         tableTitle: `Top Rated Films of ${tableTitle}`,
-        year: true
+        year: true,
+        limit: true
     });
 }
 
@@ -202,7 +204,8 @@ const getMostProducedGenres = async(req, res) => {
         formTitle: 'year-limit-form',
         formAction: '/mostproducedgenres',
         tableTitle: `Most Produced Genres of ${tableTitle}`,
-        year: true
+        year: true,
+        limit: true
     });
 }
 
@@ -283,7 +286,8 @@ const getTopRatedMovieGenres = async(req, res) => {
         formTitle: 'genre-limit-form',
         formAction: '/topratedmoviegenres',
         tableTitle: `Top Rated ${genre}`,
-        genre: true
+        genre: true,
+        limit: true
     });
 }
 
@@ -345,7 +349,8 @@ const getTopDirectorsOfAGenre = async(req, res) => {
         formTitle: 'genre-limit-form',
         formAction: '/topdirectorsofagenre',
         tableTitle: `Top Directors of ${genre}`,
-        genre: true
+        genre: true,
+        limit: true
     });
 }
 
@@ -397,7 +402,8 @@ const getMoviesFromKeyword = async(req, res) => {
         formTitle: 'keyword-form',
         formAction: '/moviesfromkeyword',
         tableTitle: `Movies from Keyword/s '${keyword}'`,
-        keyword: true
+        keyword: true,
+        limit: true
     });
 }
 
@@ -458,6 +464,69 @@ const getMovie = async(req, res) => {
 }
 //TODO: other queries
 
+//==========================================================================
+// OLAP
+//==========================================================================
+
+const getHighestGrossingGenreDecade = async(req, res) => {
+    let data = [];
+    let fields;
+
+    let decade = req.query['decade-input'];
+    if (decade == null || decade.trim() === "") {
+        decade = '2010';
+    }
+
+    try {
+        let results = await olapconnection.query(`
+        SELECT G.name, R.decade, SUM(revenue) AS total_revenue
+        FROM genres_groups GG, movies_reception_facts MR, ref_calendar R, movies_genres M, genres G  
+        WHERE G.genre_id = M.genre_id AND
+        M.genre_group_key = GG.genre_group_key AND
+          GG.genre_group_key = MR.genre_group_key AND
+          MR.release_date_key = R.date_key AND
+          R.decade IN ($1)
+        GROUP BY ROLLUP(name, decade)
+        ORDER BY total_revenue ASC;
+        `, [decade]);
+
+        fields = [{name: 'genre'}, {name: 'total revenue'}];
+        for (let i = 0; i < results.rows.length; i++) {
+            let name;
+
+            if (results.rows[i].decade == null && results.rows[i].name === null) {
+                name = 'TOTAL';
+            } else if (results.rows[i].decade !== null) {
+                name = results.rows[i].name;
+            } else {
+                continue;
+            }
+
+            data[i] = {
+                name: name,
+                total_revenue: '$' + results.rows[i]['total_revenue']
+            };
+        }
+
+    } catch (e) {
+        console.log(e)
+        res.redirect(req.get('referer'));
+        return;
+    }
+
+
+    res.render('index',{
+        title: 'Highest Grossing Genre per Decade',
+        data: data,
+        fields: fields,
+        formTitle: 'genre-decade-form',
+        formAction: '/highestgrossinggenreperdecade',
+        tableTitle: `Highest Grossing Genres of Decade ${decade}`,
+        highestGrossingGenreDecade: true,
+        decade: true
+    })
+}
+
 function convertToYear(rows) {
     for (let i = 0; i < rows.length; i++) {
         rows[i].release_date = rows[i].release_date.toISOString().split("-")[0];
@@ -471,5 +540,7 @@ module.exports = {
     getTopRatedMovieGenres,
     getTopDirectorsOfAGenre,
     getMoviesFromKeyword,
-    getMovie
+    getMovie,
+
+    getHighestGrossingGenreDecade
 }

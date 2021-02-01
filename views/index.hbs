@@ -79,6 +79,15 @@
           {{/each}}
           {{/if}}
 
+        {{#if highestGrossingGenreDecade}}
+        {{#each data}}
+            <tr>
+                <td>{{name}}</td>
+                <td>{{total_revenue}}</td>
+            </tr>
+        {{/each}}
+        {{/if}}
+
 
 
         </tbody>
@@ -130,10 +139,28 @@
             <input id="keyword-input" name="keyword-input" class="form-control" type="text" placeholder="e.g woman director" maxlength="50" required></input>
           {{/if}}
 
-          <label class="form-control-label mt-2" for="limit-input">Set Limit</label>
-          <input id="limit-input" name="limit-input" class="form-control" type="number" placeholder="Limit (e.g. 10)"
-              min="1" max="443434343434"></input>
-          
+          {{#if decade}}
+              <label class="form-control-label mt-2" for="genre-input">Decade</label>
+              <select id="decade-input" name="decade-input" class="selectpicker form-control">
+                  <option>1910</option>
+                  <option>1920</option>
+                  <option>1930</option>
+                  <option>1940</option>
+                  <option>1950</option>
+                  <option>1960</option>
+                  <option>1970</option>
+                  <option>1980</option>
+                  <option>1990</option>
+                  <option>2000</option>
+                  <option>2010</option>
+              </select>
+          {{/if}}
+
+          {{#if limit}}
+              <label class="form-control-label mt-2" for="limit-input">Set Limit</label>
+              <input id="limit-input" name="limit-input" class="form-control" type="number" placeholder="Limit (e.g. 10)"
+                     min="1" max="443434343434"/>
+          {{/if}}
 
           <button class="btn btn-danger mt-4" type="submit">Submit</button>
         </form>

@@ -9,7 +9,8 @@ jQuery( function () {
 
     $('#test').DataTable({
         "order": [],
-        "scrollX": true
+        "scrollX": true,
+        "pageLength": 25
     });
 
     function getMovie(id) {

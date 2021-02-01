@@ -22,6 +22,17 @@ const connect = async () => {
     ssl: {rejectUnauthorized: false}
   });
 
+  const olapconnection = new Pool({
+    user: "avnadmin",
+    password: "bcba6pfw9v5g6i68",
+    host: "pg-2e07fd4b-dlsu-26dd.aivencloud.com",
+    database: "dw_movies",
+    port: 14205,
+    idleTimeoutMillis: 0,
+    connectionTimeoutMillis: 0,
+    ssl: {rejectUnauthorized: false}
+  })
+
   pgconnection.connect((err, client, done) => {
     if (err) {
       console.log(err);
@@ -29,9 +40,18 @@ const connect = async () => {
     }
 
     console.log('Connected successfully to db');
-  })
+    olapconnection.connect((err, client, done) => {
+      if (err) {
+        console.log(err);
+        return;
+      }
+
+      console.log('Connected successfully to olap db');
+    });
+  });
 
   global.pgconnection = pgconnection;
+  global.olapconnection = olapconnection;
   
 };
 
