@@ -13,6 +13,8 @@ jQuery( function () {
         "pageLength": 25
     });
 
+    $('.js-example-basic-single').select2();
+
     function getMovie(id) {
         alert('hello')
         window.open('/movie/' + id);

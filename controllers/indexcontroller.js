@@ -504,7 +504,7 @@ const getHighestGrossingGenreDecade = async(req, res) => {
 
             data[i] = {
                 name: name,
-                total_revenue: '$' + results.rows[i]['total_revenue']
+                total_revenue: results.rows[i]['total_revenue']
             };
         }
 
@@ -527,6 +527,66 @@ const getHighestGrossingGenreDecade = async(req, res) => {
     })
 }
 
+const getProductionCompanyRevenue = async(req, res) => {
+    let data;
+    let fields;
+
+    let pc = req.query['pc'];
+    if (pc == null || pc.trim() === "") {
+        pc = 'Disney'
+    }
+
+    let query = `
+        SELECT PC.name, sum(MR.revenue) AS revenue
+        FROM movies_reception_facts MR, pc_groups PG, movies_pc MP, production_companies PC, metadata M
+        WHERE PC.pc_id = MP.pc_id AND
+            MP.pc_group_key = PG.pc_group_key AND
+            PG.pc_group_key = MR.pc_group_key AND
+            M.metadata_id = MR.metadata_id AND
+        PC.name IN ($1)
+        GROUP BY PC.name;
+    `;
+
+    let pcQuery = `
+        SELECT PC.name, sum(MR.revenue)
+        FROM movies_reception_facts MR, pc_groups PG, movies_pc MP, production_companies PC, metadata M
+        WHERE PC.pc_id = MP.pc_id AND
+              MP.pc_group_key = PG.pc_group_key AND
+              PG.pc_group_key = MR.pc_group_key AND
+              M.metadata_id = MR.metadata_id 
+        GROUP BY PC.name
+    `;
+
+    let pcOptions;
+    try {
+        let [results, optionResults] = await Promise.all([
+            olapconnection.query(query, [pc]),
+            olapconnection.query(pcQuery)
+        ]);
+
+        data = results.rows;
+        pcOptions = optionResults.rows;
+        fields = [{name: 'Production Company'}, {name: 'Revenue'}];
+
+    } catch (e) {
+        console.log(e);
+        res.redirect(req.get('referer'));
+        return;
+    }
+
+    res.render('index', {
+        title: 'Total Revenue of a Production Company',
+        data: data,
+        fields: fields,
+        formTitle: 'pc-revenue-form',
+        formAction: '/totalrevenueofapc',
+        tableTitle: `Total Revenue of ${pc}`,
+        pcRevenue: true,
+        pc: true,
+        pcOptions: pcOptions
+    });
+}
+
 function convertToYear(rows) {
     for (let i = 0; i < rows.length; i++) {
         rows[i].release_date = rows[i].release_date.toISOString().split("-")[0];
@@ -542,5 +602,6 @@ module.exports = {
     getMoviesFromKeyword,
     getMovie,
 
-    getHighestGrossingGenreDecade
+    getHighestGrossingGenreDecade,
+    getProductionCompanyRevenue
 }

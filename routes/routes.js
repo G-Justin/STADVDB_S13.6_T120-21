@@ -12,6 +12,7 @@ app.get('/moviesfromkeyword', indexController.getMoviesFromKeyword);
 app.get('/movie/:id', indexController.getMovie);
 
 app.get('/highestgrossinggenreperdecade', indexController.getHighestGrossingGenreDecade);
+app.get('/totalrevenueofapc', indexController.getProductionCompanyRevenue);
 /* TODO: test
 app.get("/highestgrossing", db.getHighestGrossing); //ex: /highestgrossing?year=<YEAR>&limit=<NUMBER OF RESULTS>
 app.get("/mostproducedgenre", db.getMostProducedGenre); //ex: /mostproducedgenre?year=<YEAR>&limit=<NUMBER OF RESULTS>

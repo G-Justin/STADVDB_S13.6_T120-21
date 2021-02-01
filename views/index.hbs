@@ -83,10 +83,19 @@
         {{#each data}}
             <tr>
                 <td>{{name}}</td>
-                <td>{{total_revenue}}</td>
+                <td>${{total_revenue}}</td>
             </tr>
         {{/each}}
         {{/if}}
+
+          {{#if pcRevenue}}
+              {{#each data}}
+                  <tr>
+                      <td>{{name}}</td>
+                      <td>${{revenue}}</td>
+                  </tr>
+              {{/each}}
+          {{/if}}
 
 
 
@@ -94,6 +103,7 @@
       </table>
     </div>
   </div>
+
   <div class="col-xl-4">
     <div class="card card-header border-0">
       <div class="card-header border-0">
@@ -108,7 +118,18 @@
               placeholder="Between 1951 - 2017"></input>
           {{/if}}
 
-          {{#if genre}}
+            {{#if pc}}
+                <label class="form-control-label mt-2" for="pc">Production Company</label>
+                <input id="pc" name="pc" class="selectpicker form-control" list="pc-input" placeholder="Type to search" required>
+                <datalist id="pc-input" name="pc-input">
+                    {{#each pcOptions}}
+                        <option value="{{name}}">{{name}}</option>
+                    {{/each}}
+                </datalist>
+            {{/if}}
+
+
+            {{#if genre}}
             <label class="form-control-label mt-2" for="genre-input">Genre</label>
               <select id="genre-input" name="genre-input" class="selectpicker form-control">
                 <option>Action</option>
@@ -161,6 +182,8 @@
               <input id="limit-input" name="limit-input" class="form-control" type="number" placeholder="Limit (e.g. 10)"
                      min="1" max="443434343434"/>
           {{/if}}
+
+
 
           <button class="btn btn-danger mt-4" type="submit">Submit</button>
         </form>
