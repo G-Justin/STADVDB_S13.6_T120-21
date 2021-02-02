@@ -504,6 +504,7 @@ const getHighestGrossingGenreDecade = async(req, res) => {
     })
 }
 
+//slice
 const getProductionCompanyRevenue = async(req, res) => {
     let data;
     let fields;
@@ -514,14 +515,16 @@ const getProductionCompanyRevenue = async(req, res) => {
     }
 
     let query = `
-        SELECT PC.name, sum(MR.revenue) AS revenue
-        FROM movies_reception_facts MR, pc_groups PG, movies_pc MP, production_companies PC, metadata M
-        WHERE PC.pc_id = MP.pc_id AND
-            MP.pc_group_key = PG.pc_group_key AND
-            PG.pc_group_key = MR.pc_group_key AND
-            M.metadata_id = MR.metadata_id AND
-        PC.name IN ($1)
-        GROUP BY PC.name;
+        SELECT PC.name, SUM(revenue) as total_revenue
+        FROM movies_reception_facts MR
+        JOIN pc_groups PG ON MR.pc_group_key = PG.pc_group_key
+        JOIN movies_pc MP ON PG.pc_group_key = MP.pc_group_key
+        JOIN production_companies PC ON MP.pc_id = PC.pc_id
+        WHERE PC.pc_id IN(
+        SELECT pc_id
+        FROM production_companies
+        WHERE name = $1)
+        GROUP BY(PC.name)
     `;
 
     let pcQuery = `
