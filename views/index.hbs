@@ -97,8 +97,25 @@
               {{/each}}
           {{/if}}
 
+          {{#if pcYearRevenue}}
+              {{#each data}}
+                  <tr>
+                      <td>{{name}}</td>
+                      <td>{{year}}</td>
+                      <td>${{total_revenue}}</td>
+                  </tr>
+              {{/each}}
+          {{/if}}
 
-
+          {{#if genreRevenueYear}}
+              {{#each data}}
+                  <tr>
+                      <td>{{name}}</td>
+                      <td>{{year}}</td>
+                      <td>${{total_revenue}}</td>
+                  </tr>
+              {{/each}}
+          {{/if}}
         </tbody>
       </table>
     </div>

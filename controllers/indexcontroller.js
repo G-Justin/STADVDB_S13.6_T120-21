@@ -468,6 +468,7 @@ const getMovie = async(req, res) => {
 // OLAP
 //==========================================================================
 
+//TODO: display decade anyway
 const getHighestGrossingGenreDecade = async(req, res) => {
     let data = [];
     let fields;
@@ -587,6 +588,116 @@ const getProductionCompanyRevenue = async(req, res) => {
     });
 }
 
+//TODO: fix
+const getPcRevenueYear = async(req, res) => {
+    let data;
+    let fields;
+
+    let pc = req.query['pc'];
+    if (pc == null || pc.trim() === "") {
+        pc = 'Disney'
+    }
+
+    let year = req.query['year-input'];
+    if (year == null || String(year).trim() === '') {
+        year = 2010;
+    }
+
+    let query = `
+    SELECT PC.name, RC.year, SUM(revenue) as total_revenue
+    FROM movies_reception_facts MR
+    JOIN ref_calendar RC ON MR.release_date_key = RC.date_key
+    JOIN pc_groups PG ON MR.pc_group_key = PG.pc_group_key
+    JOIN movies_pc MP ON PG.pc_group_key = MP.pc_group_key
+    JOIN production_companies PC ON MP.pc_id = PC.pc_id
+    WHERE PC.name IN(
+    SELECT name
+    FROM production_companies
+    WHERE name = 'Disney') AND 
+    RC.year IN(
+    SELECT year
+    FROM ref_calendar
+    WHERE year = 2000
+    )
+    GROUP BY(PC.name, RC.year)
+    `;
+
+    let pcQuery = `
+        SELECT PC.name, sum(MR.revenue)
+        FROM movies_reception_facts MR, pc_groups PG, movies_pc MP, production_companies PC, metadata M
+        WHERE PC.pc_id = MP.pc_id AND
+              MP.pc_group_key = PG.pc_group_key AND
+              PG.pc_group_key = MR.pc_group_key AND
+              M.metadata_id = MR.metadata_id 
+        GROUP BY PC.name
+    `;
+
+    let pcOptions;
+    try {
+      let [results, optionResults] = await Promise.all([
+          olapconnection.query(query),
+          olapconnection.query(pcQuery)
+      ]);
+
+        data = results.rows;
+        pcOptions = optionResults.rows;
+        fields = [{name: 'Production Company'}, {name: 'Year'}, {name: 'Revenue'}];
+    } catch (e) {
+        console.log(e);
+        res.redirect(req.get('referer'));
+        return;
+    }
+
+    res.render('index', {
+        title: 'Total Revenue of a Production Company of in a Year',
+        data: data,
+        fields: fields,
+        formTitle: 'pc-revenue-form',
+        formAction: '/pcrevenueyear',
+        tableTitle: `Total Revenue of ${pc} in the year ${year}`,
+        pcYearRevenue: true,
+        pc: true,
+        year: true,
+        pcOptions: pcOptions
+    });
+}
+
+const getGenreRevenueYear = async (req, res) => {
+    let data;
+    let fields;
+
+    try {
+        let results = await olapconnection.query(`
+            SELECT G.name, RC.year, SUM(MR.revenue) AS total_revenue
+            FROM movies_reception_facts MR
+            JOIN ref_calendar RC ON MR.release_date_key = RC.date_key
+            JOIN genres_groups GG ON MR.genre_group_key = GG.genre_group_key
+            JOIN movies_genres MG ON GG.genre_group_key = MG.genre_group_key
+            JOIN genres G ON G.genre_id = MG.genre_id
+            GROUP BY ROLLUP(G.name, RC.year)
+            ORDER BY G.name, RC.year
+        `);
+
+        data = results.rows;
+        fields = [{name: 'Name'}, {name: 'Year'}, {name: 'Revenue'}];
+    } catch (e) {
+        console.log(e);
+        res.redirect(req.get('referer'));
+        return;
+    }
+
+    res.render('index', {
+        title: 'Total Revenue of a Genre in a Year',
+        data: data,
+        fields: fields,
+        formTitle: 'genre-revenue-form',
+        formAction: '/genrerevenueyear',
+        tableTitle: `Total Revenue of Genres of Each Year`,
+        genreRevenueYear: true
+    });
+}
+
+
 function convertToYear(rows) {
     for (let i = 0; i < rows.length; i++) {
         rows[i].release_date = rows[i].release_date.toISOString().split("-")[0];
@@ -603,5 +714,7 @@ module.exports = {
     getMovie,
 
     getHighestGrossingGenreDecade,
-    getProductionCompanyRevenue
+    getProductionCompanyRevenue,
+    getPcRevenueYear,
+    getGenreRevenueYear
 }
