@@ -536,6 +536,7 @@ const getProductionCompanyRevenue = async(req, res) => {
               PG.pc_group_key = MR.pc_group_key AND
               M.metadata_id = MR.metadata_id 
         GROUP BY PC.name
+        ORDER BY PC.name;
     `;
 
     let pcOptions;
@@ -610,6 +611,7 @@ const getPcRevenueYear = async(req, res) => {
               PG.pc_group_key = MR.pc_group_key AND
               M.metadata_id = MR.metadata_id 
         GROUP BY PC.name
+        ORDER BY PC.name;
     `;
 
     let pcOptions;
@@ -668,12 +670,12 @@ const getGenreRevenueYear = async (req, res) => {
     }
 
     res.render('index', {
-        title: 'Total Revenue of a Genre in a Year',
+        title: 'Genre Revenue Per Year',
         data: data,
         fields: fields,
         formTitle: 'genre-revenue-form',
         formAction: '/genrerevenueyear',
-        tableTitle: `Total Revenue of Genres of Each Year`,
+        tableTitle: `Genre Revenue Per Year`,
         genreRevenueYear: true
     });
 }
