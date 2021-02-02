@@ -147,6 +147,16 @@
                 </datalist>
             {{/if}}
 
+            {{#if yearSelect}}
+                <label class="form-control-label mt-2" for="pc">Year</label>
+                <input id="selectYear" name="selectYear" class="selectpicker form-control" list="year-input" placeholder="Type to search" required>
+                <datalist id="year-input" name="year-input">
+                    {{#each pcOptions}}
+                        <option value="{{year}}">{{year}}</option>
+                    {{/each}}
+                </datalist>
+            {{/if}}
+
 
             {{#if genre}}
             <label class="form-control-label mt-2" for="genre-input">Genre</label>

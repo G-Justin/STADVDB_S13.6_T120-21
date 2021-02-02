@@ -583,7 +583,7 @@ const getPcRevenueYear = async(req, res) => {
 
     let pc = req.query['pc'];
     if (pc == null || pc.trim() === "") {
-        pc = 'Disney'
+        pc = 'Columbia Pictures'
     }
 
     let year = req.query['year-input'];
@@ -601,11 +601,11 @@ const getPcRevenueYear = async(req, res) => {
     WHERE PC.name IN(
     SELECT name
     FROM production_companies
-    WHERE name = 'Disney') AND 
+    WHERE name = $1) AND 
     RC.year IN(
     SELECT year
     FROM ref_calendar
-    WHERE year = 2000
+    WHERE year = $2
     )
     GROUP BY(PC.name, RC.year)
     `;
@@ -621,12 +621,28 @@ const getPcRevenueYear = async(req, res) => {
         ORDER BY PC.name;
     `;
 
+    /*let yearQuery = `
+        SELECT PC.name, RC.year, SUM(revenue) as total_revenue
+    FROM movies_reception_facts MR
+    JOIN ref_calendar RC ON MR.release_date_key = RC.date_key
+    JOIN pc_groups PG ON MR.pc_group_key = PG.pc_group_key
+    JOIN movies_pc MP ON PG.pc_group_key = MP.pc_group_key
+    JOIN production_companies PC ON MP.pc_id = PC.pc_id
+    WHERE PC.name IN(
+    SELECT name
+    FROM production_companies
+    WHERE name = $1) 
+    GROUP BY(PC.name, RC.year)
+    `; */
+
     let pcOptions;
+    let yearOptions;
     try {
-      let [results, optionResults] = await Promise.all([
-          olapconnection.query(query),
-          olapconnection.query(pcQuery)
-      ]);
+        let [results, optionResults] = await Promise.all([
+            olapconnection.query(query, [pc, year]),
+            olapconnection.query(pcQuery),
+            //olapconnection.query(yearQuery, [pc])
+        ]);
 
         data = results.rows;
         pcOptions = optionResults.rows;
@@ -643,11 +659,11 @@ const getPcRevenueYear = async(req, res) => {
         fields: fields,
         formTitle: 'pc-revenue-form',
         formAction: '/pcrevenueyear',
-        tableTitle: `Total Revenue of ${pc} in the year ${year}`,
+        tableTitle: `Total Revenue of a Production Company`,
         pcYearRevenue: true,
         pc: true,
-        year: true,
         pcOptions: pcOptions,
+        year: true,
         filter: true
     });
 }

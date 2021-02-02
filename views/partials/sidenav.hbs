@@ -48,12 +48,24 @@
               <span class="nav-link-text">Movies Keyword Search</span>
             </a>
           </li>
+
+            <li class="nav-item">
+                    <div style="text-align: center;"><h3> <span class="nav-link-text">OLAP</span></h3></div>
+            </li>
+
           <li class="nav-item">
            <a class="nav-link {{#if highestGrossingGenreDecade}}active{{/if}}" href="/highestgrossinggenreperdecade">
              <i class="ni ni-zoom-split-in text-red"></i>
              <span class="nav-link-text">Genre Revenue Per Decade</span>
            </a>
           </li>
+
+            <li class="nav-item">
+                <a class="nav-link {{#if genreRevenueYear}}active{{/if}}" href="/genrerevenueyear">
+                    <i class="ni ni-zoom-split-in text-red"></i>
+                    <span class="nav-link-text">Genre Revenue Per Year</span>
+                </a>
+            </li>
 
             <li class="nav-item">
            <a class="nav-link {{#if pcRevenue}}active{{/if}}" href="/totalrevenueofapc">
@@ -69,12 +81,7 @@
            </a>
           </li>
 
-            <li class="nav-item">
-           <a class="nav-link {{#if genreRevenueYear}}active{{/if}}" href="/genrerevenueyear">
-             <i class="ni ni-zoom-split-in text-red"></i>
-             <span class="nav-link-text">Genre Revenue Per Year</span>
-           </a>
-          </li>
+
 
         </ul>
         <!-- Divider -->
