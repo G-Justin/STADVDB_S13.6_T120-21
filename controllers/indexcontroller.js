@@ -60,7 +60,8 @@ const getHighestGrossing = async(req, res) => {
         formAction: '/highestgrossing',
         tableTitle: `Highest Grossing Films of ${tableTitle}`,
         year: true,
-        limit: true
+        limit: true,
+        filter: true
     });
 
 };
@@ -130,7 +131,8 @@ const getTopRatedMovies = async(req, res) => {
         formAction: '/topratedmovies',
         tableTitle: `Top Rated Films of ${tableTitle}`,
         year: true,
-        limit: true
+        limit: true,
+        filter: true
     });
 }
 
@@ -205,7 +207,8 @@ const getMostProducedGenres = async(req, res) => {
         formAction: '/mostproducedgenres',
         tableTitle: `Most Produced Genres of ${tableTitle}`,
         year: true,
-        limit: true
+        limit: true,
+        filter: true,
     });
 }
 
@@ -287,7 +290,8 @@ const getTopRatedMovieGenres = async(req, res) => {
         formAction: '/topratedmoviegenres',
         tableTitle: `Top Rated ${genre}`,
         genre: true,
-        limit: true
+        limit: true,
+        filter: true
     });
 }
 
@@ -350,7 +354,8 @@ const getTopDirectorsOfAGenre = async(req, res) => {
         formAction: '/topdirectorsofagenre',
         tableTitle: `Top Directors of ${genre}`,
         genre: true,
-        limit: true
+        limit: true,
+        filter: true
     });
 }
 
@@ -403,7 +408,8 @@ const getMoviesFromKeyword = async(req, res) => {
         formAction: '/moviesfromkeyword',
         tableTitle: `Movies from Keyword/s '${keyword}'`,
         keyword: true,
-        limit: true
+        limit: true,
+        filter: true
     });
 }
 
@@ -565,7 +571,8 @@ const getProductionCompanyRevenue = async(req, res) => {
         tableTitle: `Total Revenue of ${pc}`,
         pcRevenue: true,
         pc: true,
-        pcOptions: pcOptions
+        pcOptions: pcOptions,
+        filter: true
     });
 }
 
@@ -640,7 +647,8 @@ const getPcRevenueYear = async(req, res) => {
         pcYearRevenue: true,
         pc: true,
         year: true,
-        pcOptions: pcOptions
+        pcOptions: pcOptions,
+        filter: true
     });
 }
 
