@@ -576,7 +576,6 @@ const getProductionCompanyRevenue = async(req, res) => {
     });
 }
 
-//TODO: fix
 const getPcRevenueYear = async(req, res) => {
     let data;
     let fields;

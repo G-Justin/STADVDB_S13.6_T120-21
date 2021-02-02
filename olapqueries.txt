@@ -1,0 +1,50 @@
+//rollup
+           SELECT G.name, RC.decade, SUM(MR.revenue) AS total_revenue
+                        FROM movies_reception_facts MR
+                        JOIN ref_calendar RC ON MR.release_date_key = RC.date_key
+                        JOIN genres_groups GG ON MR.genre_group_key = GG.genre_group_key
+                        JOIN movies_genres MG ON GG.genre_group_key = MG.genre_group_key
+                        JOIN genres G ON G.genre_id = MG.genre_id
+                        GROUP BY ROLLUP(G.name, RC.decade)
+                        ORDER BY G.name, RC.decade
+
+
+//drilldown
+            SELECT G.name, RC.year, SUM(MR.revenue) AS total_revenue
+                        FROM movies_reception_facts MR
+                        JOIN ref_calendar RC ON MR.release_date_key = RC.date_key
+                        JOIN genres_groups GG ON MR.genre_group_key = GG.genre_group_key
+                        JOIN movies_genres MG ON GG.genre_group_key = MG.genre_group_key
+                        JOIN genres G ON G.genre_id = MG.genre_id
+                        GROUP BY ROLLUP(G.name, RC.year)
+                        ORDER BY G.name, RC.year
+
+//slice
+            SELECT PC.name, SUM(revenue) as total_revenue
+                        FROM movies_reception_facts MR
+                        JOIN pc_groups PG ON MR.pc_group_key = PG.pc_group_key
+                        JOIN movies_pc MP ON PG.pc_group_key = MP.pc_group_key
+                        JOIN production_companies PC ON MP.pc_id = PC.pc_id
+                        WHERE PC.pc_id IN(
+                        SELECT pc_id
+                        FROM production_companies
+                        WHERE name = $1)
+                        GROUP BY(PC.name)
+
+//dice
+             SELECT PC.name, RC.year, SUM(revenue) as total_revenue
+                         FROM movies_reception_facts MR
+                         JOIN ref_calendar RC ON MR.release_date_key = RC.date_key
+                         JOIN pc_groups PG ON MR.pc_group_key = PG.pc_group_key
+                         JOIN movies_pc MP ON PG.pc_group_key = MP.pc_group_key
+                         JOIN production_companies PC ON MP.pc_id = PC.pc_id
+                         WHERE PC.name IN(
+                         SELECT name
+                         FROM production_companies
+                         WHERE name = $1) AND
+                         RC.year IN(
+                         SELECT year
+                         FROM ref_calendar
+                         WHERE year = $2
+                         )
+                         GROUP BY(PC.name, RC.year)

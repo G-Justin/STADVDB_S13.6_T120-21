@@ -2,10 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="13c7e8fa-c681-44cb-9881-40f305e7ac0c" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/controllers/indexcontroller.js" beforeDir="false" afterPath="$PROJECT_DIR$/controllers/indexcontroller.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/views/index.hbs" beforeDir="false" afterPath="$PROJECT_DIR$/views/index.hbs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/views/partials/sidenav.hbs" beforeDir="false" afterPath="$PROJECT_DIR$/views/partials/sidenav.hbs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ETL/ETL.rmp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ETL/ETL_xml.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/olapqueries.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -24,9 +23,17 @@
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/ETL" />
     <property name="nodejs_package_manager_path" value="npm" />
     <property name="vue.rearranger.settings.migration" value="true" />
+  </component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\Justin G\Documents\GitHub\ST-ADVDB-G6\ETL" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\Justin G\Documents\GitHub\ST-ADVDB-G6\ETLxml" />
+    </key>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
@@ -38,7 +45,7 @@
       <updated>1610120058329</updated>
       <workItem from="1610120060531" duration="5003000" />
       <workItem from="1612193682689" duration="16258000" />
-      <workItem from="1612269509713" duration="22296000" />
+      <workItem from="1612269509713" duration="22628000" />
     </task>
     <servers />
   </component>
