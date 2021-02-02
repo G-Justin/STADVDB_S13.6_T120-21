@@ -475,14 +475,15 @@ const getHighestGrossingGenreDecade = async(req, res) => {
 
     try {
         let results = await olapconnection.query(`
-        SELECT G.name, R.decade, SUM(revenue) AS total_revenue
-        FROM genres_groups GG, movies_reception_facts MR, ref_calendar R, movies_genres M, genres G  
-        WHERE G.genre_id = M.genre_id AND
-        M.genre_group_key = GG.genre_group_key AND
-          GG.genre_group_key = MR.genre_group_key AND
-          MR.release_date_key = R.date_key 
-        GROUP BY ROLLUP(name, decade)
-        ORDER BY G.name, R.decade;
+
+            SELECT G.name, RC.decade, SUM(MR.revenue) AS total_revenue
+            FROM movies_reception_facts MR
+            JOIN ref_calendar RC ON MR.release_date_key = RC.date_key
+            JOIN genres_groups GG ON MR.genre_group_key = GG.genre_group_key
+            JOIN movies_genres MG ON GG.genre_group_key = MG.genre_group_key
+            JOIN genres G ON G.genre_id = MG.genre_id
+            GROUP BY ROLLUP(G.name, RC.decade)
+            ORDER BY G.name, RC.decade
         `);
 
         data = results.rows;
