@@ -468,15 +468,10 @@ const getMovie = async(req, res) => {
 // OLAP
 //==========================================================================
 
-//TODO: display decade anyway
+// rollup
 const getHighestGrossingGenreDecade = async(req, res) => {
-    let data = [];
+    let data;
     let fields;
-
-    let decade = req.query['decade-input'];
-    if (decade == null || decade.trim() === "") {
-        decade = '2010';
-    }
 
     try {
         let results = await olapconnection.query(`
@@ -485,36 +480,18 @@ const getHighestGrossingGenreDecade = async(req, res) => {
         WHERE G.genre_id = M.genre_id AND
         M.genre_group_key = GG.genre_group_key AND
           GG.genre_group_key = MR.genre_group_key AND
-          MR.release_date_key = R.date_key AND
-          R.decade IN ($1)
+          MR.release_date_key = R.date_key 
         GROUP BY ROLLUP(name, decade)
-        ORDER BY total_revenue ASC;
-        `, [decade]);
+        ORDER BY G.name, R.decade;
+        `);
 
-        fields = [{name: 'genre'}, {name: 'total revenue'}];
-        for (let i = 0; i < results.rows.length; i++) {
-            let name;
-
-            if (results.rows[i].decade == null && results.rows[i].name === null) {
-                name = 'TOTAL';
-            } else if (results.rows[i].decade !== null) {
-                name = results.rows[i].name;
-            } else {
-                continue;
-            }
-
-            data[i] = {
-                name: name,
-                total_revenue: results.rows[i]['total_revenue']
-            };
-        }
-
+        data = results.rows;
+        fields = [{name: 'genre'}, {name: 'decade'}, {name: 'total revenue'}];
     } catch (e) {
         console.log(e)
         res.redirect(req.get('referer'));
         return;
     }
-
 
     res.render('index',{
         title: 'Highest Grossing Genre per Decade',
@@ -522,9 +499,8 @@ const getHighestGrossingGenreDecade = async(req, res) => {
         fields: fields,
         formTitle: 'genre-decade-form',
         formAction: '/highestgrossinggenreperdecade',
-        tableTitle: `Highest Grossing Genres of Decade ${decade}`,
-        highestGrossingGenreDecade: true,
-        decade: true
+        tableTitle: `Highest Grossing Genres of Each Decade`,
+        highestGrossingGenreDecade: true
     })
 }
 
@@ -662,6 +638,7 @@ const getPcRevenueYear = async(req, res) => {
     });
 }
 
+// Drilldown
 const getGenreRevenueYear = async (req, res) => {
     let data;
     let fields;
