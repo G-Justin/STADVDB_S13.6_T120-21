@@ -500,7 +500,7 @@ const getHighestGrossingGenreDecade = async(req, res) => {
         fields: fields,
         formTitle: 'genre-decade-form',
         formAction: '/highestgrossinggenreperdecade',
-        tableTitle: `Highest Grossing Genres of Each Decade`,
+        tableTitle: `Genre Revenue Per Decade`,
         highestGrossingGenreDecade: true
     })
 }

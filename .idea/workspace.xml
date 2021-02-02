@@ -4,6 +4,7 @@
     <list default="true" id="13c7e8fa-c681-44cb-9881-40f305e7ac0c" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/controllers/indexcontroller.js" beforeDir="false" afterPath="$PROJECT_DIR$/controllers/indexcontroller.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/views/partials/sidenav.hbs" beforeDir="false" afterPath="$PROJECT_DIR$/views/partials/sidenav.hbs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -36,7 +37,7 @@
       <updated>1610120058329</updated>
       <workItem from="1610120060531" duration="5003000" />
       <workItem from="1612193682689" duration="16258000" />
-      <workItem from="1612269509713" duration="13201000" />
+      <workItem from="1612269509713" duration="13820000" />
     </task>
     <servers />
   </component>
